@@ -5,12 +5,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>List of Books</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
 </p>
-<table class="table">
+<table class="ui celled table">
     <thead>
         <tr>
                 <th>
@@ -25,7 +25,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Image)
                 </th>
-            <th></th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -41,12 +43,18 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
+                <img class="ui tiny image" src="@item.Image">
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.id">
+                    <i class="edit icon large"></i>
+                </a> |
+                <a asp-action="Details" asp-route-id="@item.id">
+                    <i class="green info icon large"></i>
+                </a> |
+                <a asp-action="Delete" asp-route-id="@item.id">
+                    <i class="red delete icon large"></i>
+                </a>
             </td>
         </tr>
 }

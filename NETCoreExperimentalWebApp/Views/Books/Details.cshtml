@@ -5,39 +5,48 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2 class="ui header">Details</h2>
 
 <div>
-    <h4>Book</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-    </dl>
+    <div class="ui big relaxed list">
+        <div class="item">
+            <div class="header">
+                @Html.DisplayNameFor(model => model.Title)
+            </div>
+            <div class="list">
+                @Html.DisplayFor(model => model.Title)
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">
+                @Html.DisplayNameFor(model => model.Author)
+            </div>
+            <div class="list">
+                @Html.DisplayFor(model => model.Author)
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">
+                @Html.DisplayNameFor(model => model.Type)
+            </div>
+            <div class="list">
+                @Html.DisplayFor(model => model.Type)
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">
+                @Html.DisplayNameFor(model => model.Image)
+            </div>
+            <div class="list">
+                <img class="ui medium image" src="@Model.Image">
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="ui divider"></div>
+<form class="ui form" asp-action="Edit">
+    <div class="field">
+        <input type="submit" value="Edit" class="ui button" />
+        <a class="ui button" asp-action="Index">Back to List</a>
+    </div>
+</form>
