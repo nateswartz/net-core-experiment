@@ -15,15 +15,12 @@
 <body>
     <div class="ui menu">
         <a class="item header" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-        <a class="item" asp-area="" asp-controller="Home" asp-action="About">About</a>
-        <a class="item" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+        <a class="item header" asp-area="" asp-controller="Books" asp-action="Index">Books</a>
+
     </div>
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; 2017 - NETCoreExperimentalWebApp</p>
-        </footer>
     </div>
 
     <environment include="Development">
