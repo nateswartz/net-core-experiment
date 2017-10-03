@@ -6,11 +6,18 @@
 }
 
 <h2>List of Books</h2>
-
+<div class="ui right floated icon buttons">
+    <button id="btnDisplayGrid" class="ui button">
+        <i class="block layout icon"></i>
+    </button>
+    <button id="btnDisplayList" class="ui button">
+        <i class="sidebar icon"></i>
+    </button>
+</div>
 <p>
     <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
 </p>
-<div class="ui link cards">
+<div id="GridItems" class="ui link cards">
     @foreach (var item in Model)
     {
         <div class="ui card">
@@ -43,3 +50,71 @@
         </div>
     }
 </div>
+
+<table id="ListItems" class="ui celled table" style="display:none">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Image)
+        </th>
+        <th>
+            Actions
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                <img class="ui tiny image" src="@item.Image">
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">
+                    <i class="edit icon large"></i>
+                </a> |
+                <a asp-action="Details" asp-route-id="@item.id">
+                    <i class="green info icon large"></i>
+                </a> |
+                <a asp-action="Delete" asp-route-id="@item.id">
+                    <i class="red delete icon large"></i>
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $("#btnDisplayGrid").on("click",
+            function () {
+                $("#ListItems").fadeOut();
+                $("#GridItems").fadeIn();
+            });
+
+        $("#btnDisplayList").on("click",
+            function () {
+                $("#GridItems").fadeOut();
+                $("#ListItems").fadeIn();
+            });
+
+    </script>
+}
