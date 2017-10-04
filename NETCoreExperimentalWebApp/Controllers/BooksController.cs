@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using NETCoreExperimentalWebApp.Models;
+using System.IO;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
@@ -18,8 +20,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            //return View(await _context.Book.ToListAsync());
-            return View();
+            return View(await _context.Book.ToListAsync());
         }
 
         public JsonResult GetIndex()
@@ -55,7 +56,6 @@ namespace NETCoreExperimentalWebApp.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("id,Title,Author,Type,Image")] Book book)
         {
             if (ModelState.IsValid)
@@ -65,6 +65,23 @@ namespace NETCoreExperimentalWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(book);
+        }
+
+        [HttpPost]
+        public async Task<int> CreateViaJSON()
+        {
+            var temp = Request.Body;
+            StreamReader reader = new StreamReader(temp);
+            string text = reader.ReadToEnd();
+            var book = JsonConvert.DeserializeObject<Book>(text);
+            book.id = 0;
+            if (ModelState.IsValid)
+            {
+                var newBook = _context.Add(book);
+                await _context.SaveChangesAsync();
+                return newBook.Entity.id;
+            }
+            return 0;
         }
 
         // GET: Books/Edit/5
@@ -87,7 +104,6 @@ namespace NETCoreExperimentalWebApp.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,Title,Author,Type,Image")] Book book)
         {
             if (id != book.id)
@@ -138,7 +154,6 @@ namespace NETCoreExperimentalWebApp.Controllers
 
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var book = await _context.Book.SingleOrDefaultAsync(m => m.id == id);

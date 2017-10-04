@@ -14,135 +14,185 @@
         <i class="sidebar icon"></i>
     </button>
 </div>
+<button id="btnAddBook" class="ui button">Add Book To Knockout</button>
 <p>
     <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
 </p>
-@*<div id="GridItems" class="ui link cards">
-        @foreach (var item in Model)
-        {
-            <div class="ui card">
-                <a class="image" asp-action="Edit" asp-route-id="@item.id">
-                    <img src="@item.Image">
-                </a>
-                <a class="content" asp-action="Edit" asp-route-id="@item.id">
-                    <div class="header">@item.Title</div>
-                    <div class="meta">@item.Author</div>
-                </a>
-                <div class="extra content">
-                    <div class="ui fluid buttons">
-                        <div class="ui button">
-                            <a asp-action="Edit" asp-route-id="@item.id">
-                                <i class="edit icon large"></i>
-                            </a>
-                        </div>
-                        <div class="ui button">
-                            <a asp-action="Details" asp-route-id="@item.id">
-                                <i class="green info icon large"></i>
-                            </a>
-                        </div>
-                        <div class="ui button">
-                            <a asp-action="Delete" asp-route-id="@item.id">
-                                <i class="red delete icon large"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-
-        <table id="ListItems" class="ui celled table" style="display:none">
-            <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Author)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Type)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Image)
-                </th>
-                <th>
-                    Actions
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model) {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Author)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Type)
-                    </td>
-                    <td>
-                        <img class="ui tiny image" src="@item.Image">
-                    </td>
-                    <td>
+<div id="GridItems" class="ui link cards">
+    @foreach (var item in Model)
+    {
+        <div class="ui card">
+            <a class="image" asp-action="Edit" asp-route-id="@item.id">
+                <img src="@item.Image">
+            </a>
+            <a class="content" asp-action="Edit" asp-route-id="@item.id">
+                <div class="header">@item.Title</div>
+                <div class="meta">@item.Author</div>
+            </a>
+            <div class="extra content">
+                <div class="ui fluid buttons">
+                    <div class="ui button">
                         <a asp-action="Edit" asp-route-id="@item.id">
                             <i class="edit icon large"></i>
-                        </a> |
+                        </a>
+                    </div>
+                    <div class="ui button">
                         <a asp-action="Details" asp-route-id="@item.id">
                             <i class="green info icon large"></i>
-                        </a> |
+                        </a>
+                    </div>
+                    <div class="ui button">
                         <a asp-action="Delete" asp-route-id="@item.id">
                             <i class="red delete icon large"></i>
                         </a>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>*@
-   <div data-bind="foreach: books" id="GridItems" class="ui link cards">
-       <div class="ui card">
-           <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
-               <img data-bind="attr: { src: image }" />
-           </a>
-           <div class="content">
-            <div data-bind="text: title"></div>
-            <div data-bind="text: author"></div>
-           </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    }
+</div>
+
+<table id="ListItems" class="ui celled table" style="display:none">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Image)
+        </th>
+        <th>
+            Actions
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                <img class="ui tiny image" src="@item.Image">
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">
+                    <i class="edit icon large"></i>
+                </a> |
+                <a asp-action="Details" asp-route-id="@item.id">
+                    <i class="green info icon large"></i>
+                </a> |
+                <a asp-action="Delete" asp-route-id="@item.id">
+                    <i class="red delete icon large"></i>
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<div class="ui divider"></div>
+<h2 class="ui header">Knockout Fueled List</h2>
+<div data-bind="foreach: books" id="GridItems" class="ui link cards">
+    <div class="ui card">
+        <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
+            <img data-bind="attr: { src: image }" />
+        </a>
+        <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
+            <div class="header" data-bind="text: title"></div>
+            <div class="meta" data-bind="text: author"></div>
+        </a>
+        <div class="extra content">
+            <div class="ui fluid buttons">
+                <div class="ui button">
+                    <a data-bind="attr: { href: 'Books/Edit/' + id }">
+                        <i class="edit icon large"></i>
+                    </a>
+                </div>
+                <div class="ui button">
+                    <a data-bind="attr: { href: 'Books/Details/' + id }">
+                        <i class="green info icon large"></i>
+                    </a>
+                </div>
+                <div class="ui button">
+                    <a data-bind="attr: { href: 'Books/Delete/' + id }">
+                        <i class="red delete icon large"></i>
+                    </a>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
 
 
 @section Scripts {
-        <script>
-            viewModel = {
-                books: ko.observableArray()
-            };
+    <script>
 
-            $(document).ready(function () {
-                $.ajax({
-                    type: "GET",
-                    url: "/Books/GetIndex",
-                }).done(function (data) {
-                    $(data).each(function (index, element) {
-                        viewModel.books.push(element);
-                    });
-                    ko.applyBindings(viewModel);
+        viewModel = {
+            books: ko.observableArray()
+        };
+
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "/Books/GetIndex",
+            }).done(function(data) {
+                $(data).each(function(index, element) {
+                    viewModel.books.push(element);
                 });
+                ko.applyBindings(viewModel);
+            });
+        });
+
+        $("#btnDisplayGrid").on("click",
+            function() {
+                $("#ListItems").fadeOut();
+                $("#GridItems").fadeIn();
             });
 
-            $("#btnDisplayGrid").on("click",
-                function () {
-                    $("#ListItems").fadeOut();
-                    $("#GridItems").fadeIn();
-                });
+        $("#btnDisplayList").on("click",
+            function() {
+                $("#GridItems").fadeOut();
+                $("#ListItems").fadeIn();
+            });
 
-            $("#btnDisplayList").on("click",
-                function () {
-                    $("#GridItems").fadeOut();
-                    $("#ListItems").fadeIn();
+        $("#btnAddBook").on("click",
+            function() {
+                console.log("Adding Book");
+                console.log(viewModel.books());
+                var book = {
+                    id: 0,
+                    title: "The Lorax",
+                    author: "Dr. Seuss",
+                    type: 2,
+                    image: "https://images-na.ssl-images-amazon.com/images/I/61MkcD8eXtL._SX365_BO1,204,203,200_.jpg",
+                }
+                var addBook = $.ajax({
+                    type: "POST",
+                    url: "/Books/CreateViaJSON",
+                    data: JSON.stringify(book),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(data){book.id = data;}
                 });
-
-        </script>
-    }
+                addBook.done(function() {
+                    console.log(book);
+                    viewModel.books.push(book);
+                    console.log(JSON.stringify(book));
+                    console.log(viewModel.books());
+                });
+            });
+    </script>
+}
