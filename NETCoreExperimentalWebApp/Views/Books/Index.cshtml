@@ -17,104 +17,132 @@
 <p>
     <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
 </p>
-<div id="GridItems" class="ui link cards">
-    @foreach (var item in Model)
-    {
-        <div class="ui card">
-            <a class="image" asp-action="Edit" asp-route-id="@item.id">
-                <img src="@item.Image">
-            </a>
-            <a class="content" asp-action="Edit" asp-route-id="@item.id">
-                <div class="header">@item.Title</div>
-                <div class="meta">@item.Author</div>
-            </a>
-            <div class="extra content">
-                <div class="ui fluid buttons">
-                    <div class="ui button">
-                        <a asp-action="Edit" asp-route-id="@item.id">
-                            <i class="edit icon large"></i>
-                        </a>
-                    </div>
-                    <div class="ui button">
-                        <a asp-action="Details" asp-route-id="@item.id">
-                            <i class="green info icon large"></i>
-                        </a>
-                    </div>
-                    <div class="ui button">
-                        <a asp-action="Delete" asp-route-id="@item.id">
-                            <i class="red delete icon large"></i>
-                        </a>
+@*<div id="GridItems" class="ui link cards">
+        @foreach (var item in Model)
+        {
+            <div class="ui card">
+                <a class="image" asp-action="Edit" asp-route-id="@item.id">
+                    <img src="@item.Image">
+                </a>
+                <a class="content" asp-action="Edit" asp-route-id="@item.id">
+                    <div class="header">@item.Title</div>
+                    <div class="meta">@item.Author</div>
+                </a>
+                <div class="extra content">
+                    <div class="ui fluid buttons">
+                        <div class="ui button">
+                            <a asp-action="Edit" asp-route-id="@item.id">
+                                <i class="edit icon large"></i>
+                            </a>
+                        </div>
+                        <div class="ui button">
+                            <a asp-action="Details" asp-route-id="@item.id">
+                                <i class="green info icon large"></i>
+                            </a>
+                        </div>
+                        <div class="ui button">
+                            <a asp-action="Delete" asp-route-id="@item.id">
+                                <i class="red delete icon large"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
 
-<table id="ListItems" class="ui celled table" style="display:none">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Author)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Image)
-        </th>
-        <th>
-            Actions
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                <img class="ui tiny image" src="@item.Image">
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.id">
-                    <i class="edit icon large"></i>
-                </a> |
-                <a asp-action="Details" asp-route-id="@item.id">
-                    <i class="green info icon large"></i>
-                </a> |
-                <a asp-action="Delete" asp-route-id="@item.id">
-                    <i class="red delete icon large"></i>
-                </a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+        <table id="ListItems" class="ui celled table" style="display:none">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Author)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Image)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td>
+                        <img class="ui tiny image" src="@item.Image">
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.id">
+                            <i class="edit icon large"></i>
+                        </a> |
+                        <a asp-action="Details" asp-route-id="@item.id">
+                            <i class="green info icon large"></i>
+                        </a> |
+                        <a asp-action="Delete" asp-route-id="@item.id">
+                            <i class="red delete icon large"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>*@
+   <div data-bind="foreach: books" id="GridItems" class="ui link cards">
+       <div class="ui card">
+           <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
+               <img data-bind="attr: { src: image }" />
+           </a>
+           <div class="content">
+            <div data-bind="text: title"></div>
+            <div data-bind="text: author"></div>
+           </div>
+        </div>
+        </div>
+
 
 @section Scripts {
-    <script>
-        $("#btnDisplayGrid").on("click",
-            function () {
-                $("#ListItems").fadeOut();
-                $("#GridItems").fadeIn();
+        <script>
+            viewModel = {
+                books: ko.observableArray()
+            };
+
+            $(document).ready(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/Books/GetIndex",
+                }).done(function (data) {
+                    $(data).each(function (index, element) {
+                        viewModel.books.push(element);
+                    });
+                    ko.applyBindings(viewModel);
+                });
             });
 
-        $("#btnDisplayList").on("click",
-            function () {
-                $("#GridItems").fadeOut();
-                $("#ListItems").fadeIn();
-            });
+            $("#btnDisplayGrid").on("click",
+                function () {
+                    $("#ListItems").fadeOut();
+                    $("#GridItems").fadeIn();
+                });
 
-    </script>
-}
+            $("#btnDisplayList").on("click",
+                function () {
+                    $("#GridItems").fadeOut();
+                    $("#ListItems").fadeIn();
+                });
+
+        </script>
+    }

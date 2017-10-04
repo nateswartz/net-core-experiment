@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NETCoreExperimentalWebApp.Models;
 
@@ -21,7 +18,13 @@ namespace NETCoreExperimentalWebApp.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Book.ToListAsync());
+            //return View(await _context.Book.ToListAsync());
+            return View();
+        }
+
+        public JsonResult GetIndex()
+        {
+            return Json(_context.Book.ToList());
         }
 
         // GET: Books/Details/5
