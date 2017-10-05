@@ -6,7 +6,7 @@
 }
 
 <h2>List of Books</h2>
-<div class="ui right floated icon buttons">
+<div class="ui right floated icon buttons" style="display:none">
     <button id="btnDisplayGrid" class="ui button">
         <i class="block layout icon"></i>
     </button>
@@ -18,7 +18,7 @@
 <p>
     <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
 </p>
-<div id="GridItems" class="ui link cards">
+<div id="GridItems" class="ui link cards" style="display:none">
     @foreach (var item in Model)
     {
         <div class="ui card">
@@ -135,64 +135,107 @@
         </div>
     </div>
 </div>
+<div class="ui modal">
+    <div class="content">
+        <div class="ui form">
+            <div class="field">
+                <label>Title</label>
+                <input type="text" name="title" placeholder="Title">
+            </div>
+            <div class="field">
+                <label>Author</label>
+                <input type="text" name="author" placeholder="Author">
+            </div>
+            <div class="field">
+                <label>Image</label>
+                <input type="text" name="image" placeholder="Image URL">
+            </div>
+            <div class="field">
+                <div class="ui selection dropdown">
+                    <input type="hidden" name="type">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Type</div>
+                    <div class="menu">
+                        <div class="item" data-value="0">Board</div>
+                        <div class="item" data-value="1">Standard</div>
+                        <div class="item" data-value="2">Electronic</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui divider"></div>
+        <div class="ui buttons">
+            <button id="btnConfirmAddBook" class="ui button">Confirm</button>
+            <button id="btnCancelAddBook" class="ui button">Cancel</button>
+        </div>
+    </div>
+</div>
 
+    @section Scripts {
+        <script>
+            viewModel = {
+                books: ko.observableArray()
+            };
 
-@section Scripts {
-    <script>
-
-        viewModel = {
-            books: ko.observableArray()
-        };
-
-        $(document).ready(function() {
-            $.ajax({
-                type: "GET",
-                url: "/Books/GetIndex",
-            }).done(function(data) {
-                $(data).each(function(index, element) {
-                    viewModel.books.push(element);
+            $(document).ready(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/Books/GetIndex",
+                }).done(function (data) {
+                    $(data).each(function (index, element) {
+                        viewModel.books.push(element);
+                    });
+                    ko.applyBindings(viewModel);
                 });
-                ko.applyBindings(viewModel);
-            });
-        });
-
-        $("#btnDisplayGrid").on("click",
-            function() {
-                $("#ListItems").fadeOut();
-                $("#GridItems").fadeIn();
             });
 
-        $("#btnDisplayList").on("click",
-            function() {
-                $("#GridItems").fadeOut();
-                $("#ListItems").fadeIn();
-            });
-
-        $("#btnAddBook").on("click",
-            function() {
-                console.log("Adding Book");
-                console.log(viewModel.books());
-                var book = {
-                    id: 0,
-                    title: "The Lorax",
-                    author: "Dr. Seuss",
-                    type: 2,
-                    image: "https://images-na.ssl-images-amazon.com/images/I/61MkcD8eXtL._SX365_BO1,204,203,200_.jpg",
-                }
-                var addBook = $.ajax({
-                    type: "POST",
-                    url: "/Books/CreateViaJSON",
-                    data: JSON.stringify(book),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(data){book.id = data;}
+            $("#btnDisplayGrid").on("click",
+                function () {
+                    $("#ListItems").fadeOut();
+                    $("#GridItems").fadeIn();
                 });
-                addBook.done(function() {
-                    console.log(book);
-                    viewModel.books.push(book);
-                    console.log(JSON.stringify(book));
+
+            $("#btnDisplayList").on("click",
+                function () {
+                    $("#GridItems").fadeOut();
+                    $("#ListItems").fadeIn();
+                });
+
+            $("#btnAddBook").on("click",
+                function () {
+                    $(".ui.modal").modal('show');
+                });
+
+            $("#btnCancelAddBook").on("click",
+                function () {
+                    $(".ui.modal").modal('hide');
+                });
+
+            $("#btnConfirmAddBook").on("click",
+                function () {
+                    console.log("Adding Book");
                     console.log(viewModel.books());
+                    var book = {
+                        title: "The Lorax",
+                        author: "Dr. Seuss",
+                        type: 2,
+                        image: "https://images-na.ssl-images-amazon.com/images/I/61MkcD8eXtL._SX365_BO1,204,203,200_.jpg",
+                    }
+                    var addBook = $.ajax({
+                        type: "POST",
+                        url: "/Books/CreateViaJSON",
+                        data: JSON.stringify(book),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) { book.id = data; }
+                    });
+                    addBook.done(function () {
+                        console.log(book);
+                        viewModel.books.push(book);
+                        console.log(JSON.stringify(book));
+                        console.log(viewModel.books());
+                    });
+                    $(".ui.modal").modal('hide');
                 });
-            });
-    </script>
-}
+        </script>
+    }
