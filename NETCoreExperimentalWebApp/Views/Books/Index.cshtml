@@ -23,7 +23,6 @@
 </p>
 
 <div class="ui divider"></div>
-<div>@jsonData</div>
 <h2 class="ui header">List of Books</h2>
 
 <table id="listItems" class="ui celled table" style="display:none">
@@ -114,7 +113,7 @@
         Enter a New Book
     </div>
     <div class="content">
-        <div id="frmAddBook" class="ui form">
+        <form id="frmAddBook" class="ui form" onsubmit="return false">
             <div class="field">
                 <label>Title</label>
                 <input id="inputBookTitle" type="text" name="title" placeholder="Title">
@@ -128,24 +127,20 @@
                 <input id="inputBookImage" type="text" name="image" placeholder="Image URL">
             </div>
             <div class="field">
-                <label>Type</label>
-                <div class="ui selection dropdown">
-                    <input type="hidden" name="type">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">Type</div>
-                    <div id="bookOptionsMenu" class="menu">
-                        <div class="item" data-value="0">Board</div>
-                        <div class="item" data-value="1">Electronic</div>
-                        <div class="item" data-value="2">Standard</div>
-                    </div>
-                </div>
+                <label>Dropdown</label>
+                <select class="ui dropdown" name="dropdown">
+                    <option value="0">Board</option>
+                    <option value="1">Electronic</option>
+                    <option value="2">Standard</option>
+                </select>
             </div>
-        </div>
-        <div class="ui divider"></div>
-        <div class="ui buttons">
-            <button id="btnConfirmAddBook" class="ui button">Confirm</button>
-            <button id="btnCancelAddBook" class="ui button">Cancel</button>
-        </div>
+            <div class="ui divider"></div>
+            <div class="ui buttons">
+                <button id="btnConfirmAddBook" class="ui submit button">Confirm</button>
+                <button id="btnCancelAddBook" class="ui button">Cancel</button>
+            </div>
+            <div class="ui error message"></div>
+        </form>
     </div>
 </div>
 
@@ -155,38 +150,70 @@
                 books: ko.observableArray()
             };
 
-            $(document).ready(function () {
+            $(document).ready(function() {
                 // Initialize dropdown
                 $('.ui.dropdown').dropdown();
 
                 console.log(@Html.Raw(jsonData));
                 // Convert MVC Model to Knockout ViewModel
-                $(@Html.Raw(jsonData)).each(function (index, element) {
+                $(@Html.Raw(jsonData)).each(function(index, element) {
                     viewModel.books.push(element);
                 });
                 ko.applyBindings(viewModel);
 
+                $('.ui .form').form({
+                    on: 'blur',
+                    fields: {
+                        title: {
+                            identifier: 'inputBookTitle',
+                            rules: [
+                                {
+                                    type: 'empty',
+                                    prompt: 'Please enter a Title'
+                                }
+                            ]
+                        },
+                        author: {
+                            identifier: 'inputBookAuthor',
+                            rules: [
+                                {
+                                    type: 'empty',
+                                    prompt: 'Please enter an Author'
+                                }
+                            ]
+                        },
+                        image: {
+                            identifier: 'inputBookImage',
+                            rules: [
+                                {
+                                    type: 'empty',
+                                    prompt: 'Please enter an Image'
+                                }
+                            ]
+                        }
+                    }
+                });
             });
 
             $("#btnDisplayGrid").on("click",
-                function () {
+                function() {
                     $("#listItems").fadeOut();
                     $("#gridItems").fadeIn();
                 });
 
             $("#btnDisplayList").on("click",
-                function () {
+                function() {
                     $("#gridItems").fadeOut();
                     $("#listItems").fadeIn();
                 });
 
             $("#btnAddBook").on("click",
-                function () {
+                function() {
                     $(".ui.modal").modal('show');
                 });
 
             $("#btnCancelAddBook").on("click",
-                function () {
+                function() {
                     $(".ui.modal").modal('hide');
                     // Reset form
                     $("#inputBookTitle").val("");
@@ -196,31 +223,33 @@
                 });
 
             $("#btnConfirmAddBook").on("click",
-                function () {
-                    console.log("Adding Book");
-                    console.log(viewModel.books());
-                    var book = {
-                        title: $("#inputBookTitle").val(),
-                        author: $("#inputBookAuthor").val(),
-                        type: $("#bookOptionsMenu .active").text(),
-                        image: $("#inputBookImage").val()
-                    }
-                    console.log(book);
-                    var addBook = $.ajax({
-                        type: "POST",
-                        url: "/Books/CreateViaJSON",
-                        data: JSON.stringify(book),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (data) { book.id = data; }
-                    });
-                    addBook.done(function () {
-                        console.log(book);
-                        viewModel.books.push(book);
-                        console.log(JSON.stringify(book));
+                function() {
+                    if ($(".ui.form").form('is valid')) {
+                        console.log("Adding Book");
                         console.log(viewModel.books());
-                    });
-                    $(".ui.modal").modal('hide');
+                        var book = {
+                            Title: $("#inputBookTitle").val(),
+                            Author: $("#inputBookAuthor").val(),
+                            Type: $("#bookOptionsMenu .active").text(),
+                            Image: $("#inputBookImage").val()
+                        }
+                        console.log(book);
+                        var addBook = $.ajax({
+                            type: "POST",
+                            url: "/Books/CreateViaJSON",
+                            data: JSON.stringify(book),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function(data) { book = data; }
+                        });
+                        addBook.done(function() {
+                            console.log(book);
+                            viewModel.books.push(book);
+                            console.log(JSON.stringify(book));
+                            console.log(viewModel.books());
+                        });
+                        $(".ui.modal").modal('hide');
+                    }
                 });
         </script>
     }

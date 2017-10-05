@@ -66,16 +66,16 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<int> CreateViaJSON([FromBody]Book book)
+        public async Task<IActionResult> CreateViaJSON([FromBody]Book book)
         {
             book.id = 0;
             if (ModelState.IsValid)
             {
                 var newBook = _context.Add(book);
                 await _context.SaveChangesAsync();
-                return newBook.Entity.id;
+                return new ObjectResult(newBook.Entity);
             }
-            return 0;
+            return BadRequest("Book data incomplete");
         }
 
         // GET: Books/Edit/5
