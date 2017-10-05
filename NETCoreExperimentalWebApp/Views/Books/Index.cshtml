@@ -223,8 +223,8 @@
                 });
 
             $("#btnConfirmAddBook").on("click",
-                function() {
-                    if ($(".ui.form").form('is valid')) {
+                function () {               
+                    if ($("#inputBookTitle").val() !== "" && $("#inputBookAuthor").val() !== "" && $("#inputBookImage").val() !== "") {
                         console.log("Adding Book");
                         console.log(viewModel.books());
                         var book = {
