@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using NETCoreExperimentalWebApp.Models;
-using System.IO;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
@@ -68,12 +66,8 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<int> CreateViaJSON()
+        public async Task<int> CreateViaJSON([FromBody]Book book)
         {
-            var temp = Request.Body;
-            StreamReader reader = new StreamReader(temp);
-            string text = reader.ReadToEnd();
-            var book = JsonConvert.DeserializeObject<Book>(text);
             book.id = 0;
             if (ModelState.IsValid)
             {
