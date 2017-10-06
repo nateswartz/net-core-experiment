@@ -34,9 +34,6 @@
         <th>
             Author
         </th>
-        @*<th>
-            Type
-        </th>*@
         <th>
             Image
         </th>
@@ -49,29 +46,29 @@
         <tr>
             <td data-bind="text: Title"></td>
             <td data-bind="text: Author"></td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>*@
             <td>
                 <img class="ui tiny image" data-bind="attr: { src: Image }" />
             </td>
             <td>
-                <div class="ui fluid buttons">
-                    <div class="ui button">
-                        <a data-bind="attr: { href: 'Books/Edit/' + id }">
-                            <i class="edit icon large"></i>
-                        </a>
+                <div class="ui button delete book" data-bind="attr: { 'data-value': id}">
+                    <div>
+                        <i class="bug icon large"></i>
                     </div>
-                    <div class="ui button">
-                        <a data-bind="attr: { href: 'Books/Details/' + id }">
-                            <i class="green info icon large"></i>
-                        </a>
-                    </div>
-                    <div class="ui button">
-                        <a data-bind="attr: { href: 'Books/Delete/' + id }">
-                            <i class="red delete icon large"></i>
-                        </a>
-                    </div>
+                </div>
+                <div class="ui button">
+                    <a data-bind="attr: { href: 'Books/Edit/' + id }">
+                        <i class="edit icon large"></i>
+                    </a>
+                </div>
+                <div class="ui button">
+                    <a data-bind="attr: { href: 'Books/Details/' + id }">
+                        <i class="green info icon large"></i>
+                    </a>
+                </div>
+                <div class="ui button">
+                    <a data-bind="attr: { href: 'Books/Delete/' + id }">
+                        <i class="red delete icon large"></i>
+                    </a>
                 </div>
             </td>
         </tr>
@@ -108,7 +105,8 @@
         </div>
     </div>
 </div>
-<div class="ui small modal">
+
+<div id="modalAddBook" class="ui small modal">
     <div class="header">
         Enter a New Book
     </div>
@@ -144,105 +142,128 @@
     </div>
 </div>
 
-    @section Scripts {
-        <script>
-            viewModel = {
-                books: ko.observableArray()
-            };
+@section Scripts {
+    <script>
+        viewModel = {
+            books: ko.observableArray()
+        };
 
-            $(document).ready(function() {
-                // Initialize dropdown
-                $('.ui.dropdown').dropdown();
+        $(document).ready(function() {
+            // Initialize dropdown
+            $('.ui.dropdown').dropdown();
 
-                console.log(@Html.Raw(jsonData));
-                // Convert MVC Model to Knockout ViewModel
-                $(@Html.Raw(jsonData)).each(function(index, element) {
-                    viewModel.books.push(element);
-                });
-                ko.applyBindings(viewModel);
+            console.log(@Html.Raw(jsonData));
+            // Convert MVC Model to Knockout ViewModel
+            $(@Html.Raw(jsonData)).each(function(index, element) {
+                viewModel.books.push(element);
+            });
+            ko.applyBindings(viewModel);
 
-                $('.ui .form').form({
-                    on: 'blur',
-                    fields: {
-                        title: {
-                            identifier: 'inputBookTitle',
-                            rules: [
-                                {
-                                    type: 'empty',
-                                    prompt: 'Please enter a Title'
-                                }
-                            ]
-                        },
-                        author: {
-                            identifier: 'inputBookAuthor',
-                            rules: [
-                                {
-                                    type: 'empty',
-                                    prompt: 'Please enter an Author'
-                                }
-                            ]
-                        },
-                        image: {
-                            identifier: 'inputBookImage',
-                            rules: [
-                                {
-                                    type: 'empty',
-                                    prompt: 'Please enter an Image'
-                                }
-                            ]
-                        }
-                    }, 
-                    onSuccess: function () {
-                        console.log("Adding Book");
-                        console.log(viewModel.books());
-                        var book = {
-                            Title: $("#inputBookTitle").val(),
-                            Author: $("#inputBookAuthor").val(),
-                            Type: $("#fieldBookType .active").text(),
-                            Image: $("#inputBookImage").val()
-                        }
-                        console.log(book);
-                        var addBook = $.ajax({
-                            type: "POST",
-                            url: "/Books/CreateViaJSON",
-                            data: JSON.stringify(book),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            success: function (data) { book = data; }
-                        });
-                        addBook.done(function () {
-                            console.log(book);
-                            viewModel.books.push(book);
-                            console.log(JSON.stringify(book));
-                            console.log(viewModel.books());
-                        });
-                        $(".ui.modal").modal('hide');
+            // Setup form
+            $('.ui .form').form({
+                on: 'blur',
+                fields: {
+                    title: {
+                        identifier: 'inputBookTitle',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a Title'
+                            }
+                        ]
+                    },
+                    author: {
+                        identifier: 'inputBookAuthor',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Author'
+                            }
+                        ]
+                    },
+                    image: {
+                        identifier: 'inputBookImage',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Image'
+                            }
+                        ]
                     }
-                });
+                },
+                onSuccess: function () {
+                    console.log("Adding Book");
+                    console.log(viewModel.books());
+                    var book = {
+                        Title: $("#inputBookTitle").val(),
+                        Author: $("#inputBookAuthor").val(),
+                        Type: $("#fieldBookType .active").text(),
+                        Image: $("#inputBookImage").val()
+                    }
+                    console.log(book);
+                    var addBook = $.ajax({
+                        type: "POST",
+                        url: "/Books/CreateViaJSON",
+                        data: JSON.stringify(book),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) { book = data; }
+                    });
+                    addBook.done(function () {
+                        console.log(book);
+                        viewModel.books.push(book);
+                        console.log(JSON.stringify(book));
+                        console.log(viewModel.books());
+                    });
+                    $(".ui.modal").modal('hide');
+                }
             });
 
-            $("#btnDisplayGrid").on("click",
+            // Perform any event bindings on dynamic elements
+            $(".delete.book.button").on("click",
                 function() {
-                    $("#listItems").fadeOut();
-                    $("#gridItems").fadeIn();
-                });
+                    console.log("delete item " + $(this).attr('data-value'));
+                }
+            );
+        });
 
-            $("#btnDisplayList").on("click",
-                function() {
-                    $("#gridItems").fadeOut();
-                    $("#listItems").fadeIn();
-                });
+        // Event bindings on static elements
+        $("#btnDisplayGrid").on("click",
+            function() {
+                $("#listItems").fadeOut();
+                $("#gridItems").fadeIn();
+            }
+        );
 
-            $("#btnAddBook").on("click",
-                function() {
-                    $(".ui.modal").modal('show');
-                });
+        $("#btnDisplayList").on("click",
+            function() {
+                $("#gridItems").fadeOut();
+                $("#listItems").fadeIn();
+            }
+        );
 
-            $("#btnCancelAddBook").on("click",
-                function() {
-                    $(".ui.modal").modal('hide');
-                    $(".ui.form").form('clear');
-                });
+        $("#btnAddBook").on("click",
+            function() {
+                $("#modalAddBook").modal('show');
+                $("#modalAddBook .error").removeClass("error");
+                $('.form .message').hide();
+            }
+        );
 
-        </script>
-    }
+        $("#btnCancelAddBook").on("click",
+            function() {
+                $("#modalAddBook").modal('hide');
+                $(".ui.form").form('clear');
+                $("#modalAddBook .error").removeClass("error");
+                $('.form .message').hide();
+            }
+        );
+
+        $("#btnConfirmAddBook").on("click",
+            function() {
+                $('.form .message').show();
+            }
+        );
+
+    </script>
+}
