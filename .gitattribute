@@ -1,1 +1,2 @@
-NETCoreExperimentalWebApp/wwwroot/** linguist-vendored
+NETCoreExperimentalWebApp/wwwroot/lib/* linguist-vendored
+jquery.min.js linguist-vendored
