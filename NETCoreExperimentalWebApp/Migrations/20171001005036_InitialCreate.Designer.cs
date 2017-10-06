@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using NETCoreExperimentalWebApp.Models;
 using System;
+using NETCoreExperimentalWebApp.Data;
 
 namespace NETCoreExperimentalWebApp.Migrations
 {

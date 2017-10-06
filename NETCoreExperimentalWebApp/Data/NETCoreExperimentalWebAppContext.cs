@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NETCoreExperimentalWebApp.Models;
 
-namespace NETCoreExperimentalWebApp.Models
+namespace NETCoreExperimentalWebApp.Data
 {
     public class NETCoreExperimentalWebAppContext : DbContext
     {
