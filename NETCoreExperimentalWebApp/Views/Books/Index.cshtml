@@ -1,10 +1,13 @@
 ﻿@using Newtonsoft.Json
-@model IEnumerable<NETCoreExperimentalWebApp.Models.Book>
+@model IEnumerable<Book>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var jsonData = JsonConvert.SerializeObject(Model);
+    var Title = "Title";
+    var Author = "Author";
+    var Image = "Image";
 }
 
 <h2>List of Books</h2>
@@ -29,13 +32,13 @@
     <thead>
     <tr>
         <th>
-            Title
+            @Title
         </th>
         <th>
-            Author
+            @Author
         </th>
         <th>
-            Image
+            @Image
         </th>
         <th>
             Actions
@@ -44,10 +47,10 @@
     </thead>
     <tbody data-bind="foreach: books">
         <tr>
-            <td data-bind="text: Title"></td>
-            <td data-bind="text: Author"></td>
+            <td data-bind="text: @Title"></td>
+            <td data-bind="text: @Author"></td>
             <td>
-                <img class="ui tiny image" data-bind="attr: { src: Image }" />
+                <img class="ui tiny image" data-bind="attr: { src: @Image }" />
             </td>
             <td>
                 <div class="ui button delete book" data-bind="attr: { 'data-value': id}">
@@ -78,11 +81,11 @@
 <div data-bind="foreach: books" id="gridItems" class="ui link cards">
     <div class="ui card">
         <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
-            <img data-bind="attr: { src: Image }" />
+            <img data-bind="attr: { src: @Image }" />
         </a>
         <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
-            <div class="header" data-bind="text: Title"></div>
-            <div class="meta" data-bind="text: Author"></div>
+            <div class="header" data-bind="text: @Title"></div>
+            <div class="meta" data-bind="text: @Author"></div>
         </a>
         <div class="extra content">
             <div class="ui fluid buttons">
@@ -113,16 +116,16 @@
     <div class="content">
         <form id="frmAddBook" class="ui form" onsubmit="return false">
             <div class="field">
-                <label>Title</label>
-                <input id="inputBookTitle" type="text" name="title">
+                <label>@Title</label>
+                <input id="inputBookTitle" type="text" name="@Title">
             </div>
             <div class="field">
-                <label>Author</label>
-                <input id="inputBookAuthor" type="text" name="author">
+                <label>@Author</label>
+                <input id="inputBookAuthor" type="text" name="@Author">
             </div>
             <div class="field">
-                <label>Image</label>
-                <input id="inputBookImage" type="text" name="image">
+                <label>@Image</label>
+                <input id="inputBookImage" type="text" name="@Image">
             </div>
             <div class="field" id="fieldBookType">
                 <label>Dropdown</label>
@@ -163,7 +166,7 @@
             $('.ui .form').form({
                 on: 'blur',
                 fields: {
-                    title: {
+                    @Title: {
                         identifier: 'inputBookTitle',
                         rules: [
                             {
@@ -172,7 +175,7 @@
                             }
                         ]
                     },
-                    author: {
+                    @Author: {
                         identifier: 'inputBookAuthor',
                         rules: [
                             {
@@ -181,7 +184,7 @@
                             }
                         ]
                     },
-                    image: {
+                    @Image: {
                         identifier: 'inputBookImage',
                         rules: [
                             {
@@ -195,10 +198,10 @@
                     console.log("Adding Book");
                     console.log(viewModel.books());
                     var book = {
-                        Title: $("#inputBookTitle").val(),
-                        Author: $("#inputBookAuthor").val(),
+                        @Title: $("#inputBookTitle").val(),
+                        @Author: $("#inputBookAuthor").val(),
                         Type: $("#fieldBookType .active").text(),
-                        Image: $("#inputBookImage").val()
+                        @Image: $("#inputBookImage").val()
                     }
                     console.log(book);
                     var addBook = $.ajax({
