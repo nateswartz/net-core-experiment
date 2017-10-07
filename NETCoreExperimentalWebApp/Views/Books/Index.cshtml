@@ -53,7 +53,7 @@
                 <img class="ui tiny image" data-bind="attr: { src: @Image }" />
             </td>
             <td>
-                <div class="ui button delete book" data-bind="attr: { 'data-value': id}">
+                <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
                     <div>
                         <i class="bug icon large"></i>
                     </div>
@@ -128,7 +128,7 @@
                 <input id="inputBookImage" type="text" name="@Image">
             </div>
             <div class="field" id="fieldBookType">
-                <label>Dropdown</label>
+                <label>Type</label>
                 <select class="ui dropdown" name="dropdown">
                     <option value="0">Board</option>
                     <option value="1">Electronic</option>
@@ -145,19 +145,53 @@
     </div>
 </div>
 
+<div id="modalDeleteBook" class="ui basic small modal">
+    <div class="header">
+        Are you sure you want to delete the book?
+    </div>
+    <input class="id" type="hidden" />
+    <input class="title" type="hidden" />
+    <input class="author" type="hidden" />
+    <input class="type" type="hidden" />
+    <div class="actions">
+        <div id="btnCancelDeleteBook" class="ui red basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+        <div id="btnConfirmDeleteBook" class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            Yes
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+
+        function onListDeleteClick() {
+            console.log("delete item " + $(this).attr('data-id'));
+            $("#modalDeleteBook .header").text("Are you sure you want to delete " + $(this).attr('data-title') + "?");
+            $("#modalDeleteBook .id").val($(this).attr('data-id'));
+            $("#modalDeleteBook").modal('show');
+        };
+
+        function resetAddBookModal() {
+            $(".ui.form").form('clear');
+            $("#modalAddBook .error").removeClass("error");
+            $('.form .message').hide();
+        };
+
         viewModel = {
             books: ko.observableArray()
         };
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Initialize dropdown
             $('.ui.dropdown').dropdown();
 
             console.log(@Html.Raw(jsonData));
             // Convert MVC Model to Knockout ViewModel
-            $(@Html.Raw(jsonData)).each(function(index, element) {
+            $(@Html.Raw(jsonData)).each(function (index, element) {
                 viewModel.books.push(element);
             });
             ko.applyBindings(viewModel);
@@ -167,42 +201,42 @@
                 on: 'blur',
                 fields: {
                     @Title: {
-                        identifier: 'inputBookTitle',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please enter a Title'
-                            }
-                        ]
+                    identifier: 'inputBookTitle',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter a Title'
+                        }
+                    ]
                     },
                     @Author: {
-                        identifier: 'inputBookAuthor',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please enter an Author'
-                            }
-                        ]
+                    identifier: 'inputBookAuthor',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter an Author'
+                        }
+                    ]
                     },
                     @Image: {
-                        identifier: 'inputBookImage',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please enter an Image'
-                            }
-                        ]
+                    identifier: 'inputBookImage',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter an Image'
+                        }
+                    ]
                     }
                 },
                 onSuccess: function () {
                     console.log("Adding Book");
                     console.log(viewModel.books());
                     var book = {
-                        @Title: $("#inputBookTitle").val(),
-                        @Author: $("#inputBookAuthor").val(),
-                        Type: $("#fieldBookType .active").text(),
-                        @Image: $("#inputBookImage").val()
-                    }
+                            @Title: $("#inputBookTitle").val(),
+                            @Author: $("#inputBookAuthor").val(),
+                            Type: $("#fieldBookType .active").text(),
+                            @Image: $("#inputBookImage").val()
+                    };
                     console.log(book);
                     var addBook = $.ajax({
                         type: "POST",
@@ -217,17 +251,16 @@
                         viewModel.books.push(book);
                         console.log(JSON.stringify(book));
                         console.log(viewModel.books());
+                        // When we add a new book we need to add a click handler to the delete button
+                        $(".delete.book.button").on("click", onListDeleteClick);
                     });
-                    $(".ui.modal").modal('hide');
+                    $("#modalAddBook").modal('hide');
+                    resetAddBookModal();
                 }
             });
 
             // Perform any event bindings on dynamic elements
-            $(".delete.book.button").on("click",
-                function() {
-                    console.log("delete item " + $(this).attr('data-value'));
-                }
-            );
+            $(".delete.book.button").on("click", onListDeleteClick);
         });
 
         // Event bindings on static elements
@@ -246,25 +279,37 @@
         );
 
         $("#btnAddBook").on("click",
-            function() {
+            function () {
+                resetAddBookModal();
                 $("#modalAddBook").modal('show');
-                $("#modalAddBook .error").removeClass("error");
-                $('.form .message').hide();
             }
         );
 
         $("#btnCancelAddBook").on("click",
             function() {
                 $("#modalAddBook").modal('hide');
-                $(".ui.form").form('clear');
-                $("#modalAddBook .error").removeClass("error");
-                $('.form .message').hide();
+                resetAddBookModal();
             }
         );
 
         $("#btnConfirmAddBook").on("click",
             function() {
                 $('.form .message').show();
+            }
+        );
+
+        $("#btnConfirmDeleteBook").on("click",
+            function () {
+                var deleteBook = $.ajax({
+                    type: "POST",
+                    url: "/Books/Delete/" + $("#modalDeleteBook .id").val()
+                });
+                deleteBook.done(function () {
+                    viewModel.books.remove(function (book) {
+                        return book.id == $("#modalDeleteBook .id").val();
+                    })
+                    console.log(viewModel.books());
+                });
             }
         );
 
