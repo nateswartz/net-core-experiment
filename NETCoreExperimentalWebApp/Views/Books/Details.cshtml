@@ -44,8 +44,9 @@
     </div>
 </div>
 <div class="ui divider"></div>
-<form class="ui form" asp-action="Edit">
+<form class="ui form" asp-action="Edit" method="get">
     <div class="field">
+        <input type="hidden" asp-for="id" />
         <input type="submit" value="Edit" class="ui button" />
         <a class="ui button" asp-action="Index">Back to List</a>
     </div>

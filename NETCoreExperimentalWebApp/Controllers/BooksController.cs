@@ -106,6 +106,17 @@ namespace NETCoreExperimentalWebApp.Controllers
             return View(book);
         }
 
+        [HttpPost]
+        public IActionResult EditViaJSON(int id, [FromBody]Book book)
+        {
+            if (ModelState.IsValid)
+            {
+                _bookData.Update(id, book);
+                return new ObjectResult(true);
+            }
+            return BadRequest("Book data incomplete");
+        }
+
         // GET: Books/Delete/5
         public IActionResult Delete(int? id)
         {
