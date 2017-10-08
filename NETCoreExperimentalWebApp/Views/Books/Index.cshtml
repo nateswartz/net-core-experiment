@@ -10,104 +10,113 @@
     var Image = "Image";
 }
 
-<h2>List of Books</h2>
-<div class="ui right floated icon buttons">
-    <button id="btnDisplayGrid" class="ui button">
-        <i class="block layout icon"></i>
-    </button>
-    <button id="btnDisplayList" class="ui button">
-        <i class="sidebar icon"></i>
-    </button>
-</div>
-<button id="btnAddBook" class="ui button">Add Book With Knockout</button>
-<div class="ui divider"></div>
-<p>
-    <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
-</p>
-
-<div class="ui divider"></div>
-<h2 class="ui header">List of Books</h2>
-
-<table id="listItems" class="ui celled table" style="display:none">
-    <thead>
-    <tr>
-        <th>
-            @Title
-        </th>
-        <th>
-            @Author
-        </th>
-        <th>
-            @Image
-        </th>
-        <th>
-            Actions
-        </th>
-    </tr>
-    </thead>
-    <tbody data-bind="foreach: books">
-        <tr>
-            <td data-bind="text: @Title"></td>
-            <td data-bind="text: @Author"></td>
-            <td>
-                <img class="ui tiny image" data-bind="attr: { src: @Image }" />
-            </td>
-            <td>
-                <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
-                    <div>
-                        <i class="bug icon large"></i>
+<div class="ui padded grid">
+    <div class="row">
+        <div class="column"><h2 class="ui header">List of Books</h2></div>
+    </div>
+    <div class="row">
+        <div class="four wide column"><button id="btnAddBook" class="ui button">Add Book With Knockout</button></div>
+        <div class="four wide column">
+            <a class="ui secondary button" asp-action="Create">Enter a New Book</a>
+        </div>
+        <div class="eight wide column">
+            <div class="ui right floated icon buttons">
+                <button id="btnDisplayGrid" class="ui button">
+                    <i class="block layout icon"></i>
+                </button>
+                <button id="btnDisplayList" class="ui button">
+                    <i class="sidebar icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <table id="listItems" class="ui celled table" style="display:none">
+                <thead>
+                    <tr>
+                        <th>
+                            @Image
+                        </th>
+                        <th>
+                            @Title
+                        </th>
+                        <th>
+                            @Author
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: books">
+                    <tr>
+                        <td>
+                            <img class="ui tiny image" data-bind="attr: { src: @Image }" />
+                        </td>
+                        <td data-bind="text: @Title"></td>
+                        <td data-bind="text: @Author"></td>
+                        <td>
+                            <div class="ui button">
+                                <a data-bind="attr: { href: 'Books/Edit/' + id }">
+                                    <i class="edit icon large"></i>
+                                </a>
+                            </div>
+                            <div class="ui button">
+                                <a data-bind="attr: { href: 'Books/Details/' + id }">
+                                    <i class="green info icon large"></i>
+                                </a>
+                            </div>
+                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
+                                <div>
+                                    <i class="red delete icon large"></i>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <div data-bind="foreach: books" id="gridItems" class="ui link cards column">
+                <div class="ui card">
+                    <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
+                        <img data-bind="attr: { src: @Image }" />
+                    </a>
+                    <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
+                        <div class="header" data-bind="text: @Title"></div>
+                        <div class="meta" data-bind="text: @Author"></div>
+                    </a>
+                    <div class="extra content">
+                        <div class="ui fluid buttons">
+                            <div class="ui button">
+                                <a data-bind="attr: { href: 'Books/Edit/' + id }">
+                                    <i class="edit icon large"></i>
+                                </a>
+                            </div>
+                            <div class="ui button">
+                                <a data-bind="attr: { href: 'Books/Details/' + id }">
+                                    <i class="green info icon large"></i>
+                                </a>
+                            </div>
+                            <div class="ui button">
+                                <a data-bind="attr: { href: 'Books/Delete/' + id }">
+                                    <i class="red delete icon large"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="ui button">
-                    <a data-bind="attr: { href: 'Books/Edit/' + id }">
-                        <i class="edit icon large"></i>
-                    </a>
-                </div>
-                <div class="ui button">
-                    <a data-bind="attr: { href: 'Books/Details/' + id }">
-                        <i class="green info icon large"></i>
-                    </a>
-                </div>
-                <div class="ui button">
-                    <a data-bind="attr: { href: 'Books/Delete/' + id }">
-                        <i class="red delete icon large"></i>
-                    </a>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-<div data-bind="foreach: books" id="gridItems" class="ui link cards">
-    <div class="ui card">
-        <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
-            <img data-bind="attr: { src: @Image }" />
-        </a>
-        <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
-            <div class="header" data-bind="text: @Title"></div>
-            <div class="meta" data-bind="text: @Author"></div>
-        </a>
-        <div class="extra content">
-            <div class="ui fluid buttons">
-                <div class="ui button">
-                    <a data-bind="attr: { href: 'Books/Edit/' + id }">
-                        <i class="edit icon large"></i>
-                    </a>
-                </div>
-                <div class="ui button">
-                    <a data-bind="attr: { href: 'Books/Details/' + id }">
-                        <i class="green info icon large"></i>
-                    </a>
-                </div>
-                <div class="ui button">
-                    <a data-bind="attr: { href: 'Books/Delete/' + id }">
-                        <i class="red delete icon large"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
 
 <div id="modalAddBook" class="ui small modal">
     <div class="header">
@@ -169,7 +178,6 @@
     <script>
 
         function onListDeleteClick() {
-            console.log("delete item " + $(this).attr('data-id'));
             $("#modalDeleteBook .header").text("Are you sure you want to delete " + $(this).attr('data-title') + "?");
             $("#modalDeleteBook .id").val($(this).attr('data-id'));
             $("#modalDeleteBook").modal('show');
@@ -189,7 +197,6 @@
             // Initialize dropdown
             $('.ui.dropdown').dropdown();
 
-            console.log(@Html.Raw(jsonData));
             // Convert MVC Model to Knockout ViewModel
             $(@Html.Raw(jsonData)).each(function (index, element) {
                 viewModel.books.push(element);
@@ -229,15 +236,12 @@
                     }
                 },
                 onSuccess: function () {
-                    console.log("Adding Book");
-                    console.log(viewModel.books());
                     var book = {
                             @Title: $("#inputBookTitle").val(),
                             @Author: $("#inputBookAuthor").val(),
                             Type: $("#fieldBookType .active").text(),
                             @Image: $("#inputBookImage").val()
                     };
-                    console.log(book);
                     var addBook = $.ajax({
                         type: "POST",
                         url: "/Books/CreateViaJSON",
@@ -247,10 +251,7 @@
                         success: function (data) { book = data; }
                     });
                     addBook.done(function () {
-                        console.log(book);
                         viewModel.books.push(book);
-                        console.log(JSON.stringify(book));
-                        console.log(viewModel.books());
                         // When we add a new book we need to add a click handler to the delete button
                         $(".delete.book.button").on("click", onListDeleteClick);
                     });
@@ -308,7 +309,6 @@
                     viewModel.books.remove(function (book) {
                         return book.id == $("#modalDeleteBook .id").val();
                     })
-                    console.log(viewModel.books());
                 });
             }
         );
