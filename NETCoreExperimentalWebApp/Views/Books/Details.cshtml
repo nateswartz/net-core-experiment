@@ -44,10 +44,7 @@
     </div>
 </div>
 <div class="ui divider"></div>
-<form class="ui form" asp-action="Edit" method="get">
-    <div class="field">
-        <input type="hidden" asp-for="id" />
-        <input type="submit" value="Edit" class="ui button" />
-        <a class="ui button" asp-action="Index">Back to List</a>
-    </div>
-</form>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.id" class="ui button">Edit</a>
+    <a asp-action="Index" class="ui button">Back to List</a>
+</div>

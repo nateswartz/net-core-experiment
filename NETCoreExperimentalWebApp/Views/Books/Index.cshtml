@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
     var jsonData = JsonConvert.SerializeObject(Model);
     var Title = "Title";
     var Author = "Author";
@@ -135,10 +134,7 @@
             </div>
             <div class="field" id="fieldBookType">
                 <label>Type</label>
-                <select class="ui dropdown" name="dropdown">
-                    <option value="0">Board</option>
-                    <option value="1">Electronic</option>
-                    <option value="2">Standard</option>
+                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()">
                 </select>
             </div>
             <div class="ui divider"></div>
@@ -192,10 +188,7 @@
             </div>
             <div class="field" id="fieldEditBookType">
                 <label>Type</label>
-                <select class="ui dropdown" name="dropdown">
-                    <option value="0">Board</option>
-                    <option value="1">Electronic</option>
-                    <option value="2">Standard</option>
+                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()">
                 </select>
             </div>
             <div class="ui divider"></div>
