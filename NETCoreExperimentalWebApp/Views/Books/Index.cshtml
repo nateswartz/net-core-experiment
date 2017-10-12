@@ -62,8 +62,8 @@
                                 <a data-bind="attr: { href: 'Books/Details/' + id() }">
                                     <i class="green info icon large"></i>
                                 </a>
-                            </div> 
-                            <div class="ui button delete book" data-bind="attr: { 'data-id': id(), 'data-title': @Title}">
+                            </div>
+                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
                                 <div>
                                     <i class="red delete icon large"></i>
                                 </div>
@@ -78,26 +78,26 @@
         <div class="column">
             <div data-bind="foreach: books" id="gridItems" class="ui link cards column">
                 <div class="ui card">
-                    <a class="image" data-bind="attr: { href: 'Books/Edit/' + id() }">
+                    <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
                         <img data-bind="attr: { src: @Image }" />
                     </a>
-                    <a class="content" data-bind="attr: { href: 'Books/Edit/' + id() }">
+                    <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
                         <div class="header" data-bind="text: Title"></div>
                         <div class="meta" data-bind="text: Author"></div>
                     </a>
                     <div class="extra content">
                         <div class="ui fluid buttons">
-                            <div class="ui button edit book" data-bind="attr: { 'data-id': id(), 'data-title': Title(), 'data-author': Author(), 'data-image': Image(), 'data-type': Type()}">
+                            <div class="ui button edit book" data-bind="attr: { 'data-id': id }">
                                 <div>
                                     <i class="edit icon large"></i>
                                 </div>
                             </div>
                             <div class="ui button">
-                                <a data-bind="attr: { href: 'Books/Details/' + id() }">
+                                <a data-bind="attr: { href: 'Books/Details/' + id }">
                                     <i class="green info icon large"></i>
                                 </a>
                             </div>
-                            <div class="ui button delete book" data-bind="attr: { 'data-id': id(), 'data-title': @Title}">
+                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
                                 <div>
                                     <i class="red delete icon large"></i>
                                 </div>
@@ -122,20 +122,19 @@
         <form id="frmAddBook" class="ui form" onsubmit="return false">
             <div class="field">
                 <label>@Title</label>
-                <input id="inputBookTitle" type="text" name="@Title">
+                <input id="inputAddBookTitle" type="text" name="@Title">
             </div>
             <div class="field">
                 <label>@Author</label>
-                <input id="inputBookAuthor" type="text" name="@Author">
+                <input id="inputAddBookAuthor" type="text" name="@Author">
             </div>
             <div class="field">
                 <label>@Image</label>
-                <input id="inputBookImage" type="text" name="@Image">
+                <input id="inputAddBookImage" type="text" name="@Image">
             </div>
-            <div class="field" id="fieldBookType">
+            <div class="field" id="fieldAddBookType">
                 <label>Type</label>
-                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()">
-                </select>
+                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()"></select>
             </div>
             <div class="ui divider"></div>
             <div class="ui buttons">
@@ -188,8 +187,7 @@
             </div>
             <div class="field" id="fieldEditBookType">
                 <label>Type</label>
-                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()">
-                </select>
+                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()"></select>
             </div>
             <div class="ui divider"></div>
             <div class="ui buttons">
@@ -220,12 +218,15 @@
         };
 
         function onListEditClick() {
-            $("#modalEditBook #inputEditBookId").val($(this).attr('data-id'));
-            console.log($(this).attr('data-author'));
-            $("#modalEditBook #inputEditBookTitle").val($(this).attr('data-title'));
-            $("#modalEditBook #inputEditBookAuthor").val($(this).attr('data-author'));
-            $("#modalEditBook #inputEditBookImage").val($(this).attr('data-image'));
-            $('#modalEditBook .ui.dropdown').dropdown('set selected', $(this).attr('data-type'));
+            var myId = $(this).attr('data-id');
+            var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function(book) {
+                return book.id().toString() === myId;
+            });
+            console.log(bookToEdit);
+            $("#modalEditBook #inputEditBookTitle").val(bookToEdit.Title());
+            $("#modalEditBook #inputEditBookAuthor").val(bookToEdit.Author());
+            $("#modalEditBook #inputEditBookImage").val(bookToEdit.Image());
+            $('#modalEditBook .ui.dropdown').dropdown('set selected', bookToEdit.Type().toString());
             $("#modalEditBook").modal('show');
         }
 
@@ -300,11 +301,17 @@
                     }
                 },
                 onSuccess: function () {
-                    var book = new BookViewModel(0, $("#inputAddBookAuthor").val(), $("#inputAddBookTitle").val(), $("#inputAddBookImage").val(), $("#fieldAddBookType .active").text())
+                    console.log($("#inputAddBookAuthor").val());
+                    var book = new BookViewModel(0,
+                        $("#inputAddBookAuthor").val(),
+                        $("#inputAddBookTitle").val(),
+                        $("#inputAddBookImage").val(),
+                        $("#fieldAddBookType .active").text());
+                    console.log(ko.toJS(book));
                     var addBook = $.ajax({
                         type: "POST",
                         url: "/Books/CreateViaJSON",
-                        data: JSON.stringify(book),
+                        data: JSON.stringify(ko.toJS(book)),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) { book = data; }
@@ -363,7 +370,7 @@
                     var editBook = $.ajax({
                         type: "POST",
                         url: "/Books/EditViaJSON/" + book.id,
-                        data: JSON.stringify(book),
+                        data: JSON.stringify(ko.toJS(book)),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) { book = data; }
