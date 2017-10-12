@@ -4,9 +4,6 @@
 @{
     ViewData["Title"] = "Index";
     var jsonData = JsonConvert.SerializeObject(Model);
-    var Title = "Title";
-    var Author = "Author";
-    var Image = "Image";
 }
 
 <div class="ui padded grid">
@@ -32,13 +29,13 @@
                 <thead>
                     <tr>
                         <th>
-                            @Image
+                            Image
                         </th>
                         <th>
-                            @Title
+                            Title
                         </th>
                         <th>
-                            @Author
+                            Author
                         </th>
                         <th>
                             Actions
@@ -48,22 +45,22 @@
                 <tbody data-bind="foreach: books">
                     <tr>
                         <td>
-                            <img class="ui tiny image" data-bind="attr: { src: @Image }" />
+                            <img class="ui tiny image" data-bind="attr: { src: Image }" />
                         </td>
-                        <td data-bind="text: @Title"></td>
-                        <td data-bind="text: @Author"></td>
+                        <td data-bind="text: Title"></td>
+                        <td data-bind="text: Author"></td>
                         <td>
-                            <div class="ui button">
-                                <a data-bind="attr: { href: 'Books/Edit/' + id() }">
+                            <div class="ui button edit book" data-bind="attr: { 'data-id': id }">
+                                <div>
                                     <i class="edit icon large"></i>
-                                </a>
+                                </div>
                             </div>
                             <div class="ui button">
                                 <a data-bind="attr: { href: 'Books/Details/' + id() }">
                                     <i class="green info icon large"></i>
                                 </a>
                             </div>
-                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
+                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': Title}">
                                 <div>
                                     <i class="red delete icon large"></i>
                                 </div>
@@ -79,7 +76,7 @@
             <div data-bind="foreach: books" id="gridItems" class="ui link cards column">
                 <div class="ui card">
                     <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
-                        <img data-bind="attr: { src: @Image }" />
+                        <img data-bind="attr: { src: Image }" />
                     </a>
                     <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
                         <div class="header" data-bind="text: Title"></div>
@@ -97,7 +94,7 @@
                                     <i class="green info icon large"></i>
                                 </a>
                             </div>
-                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': @Title}">
+                            <div class="ui button delete book" data-bind="attr: { 'data-id': id, 'data-title': Title}">
                                 <div>
                                     <i class="red delete icon large"></i>
                                 </div>
@@ -121,16 +118,16 @@
     <div class="content">
         <form id="frmAddBook" class="ui form" onsubmit="return false">
             <div class="field">
-                <label>@Title</label>
-                <input id="inputAddBookTitle" type="text" name="@Title">
+                <label>Title</label>
+                <input id="inputAddBookTitle" type="text" name="Title">
             </div>
             <div class="field">
-                <label>@Author</label>
-                <input id="inputAddBookAuthor" type="text" name="@Author">
+                <label>Author</label>
+                <input id="inputAddBookAuthor" type="text" name="Author">
             </div>
             <div class="field">
-                <label>@Image</label>
-                <input id="inputAddBookImage" type="text" name="@Image">
+                <label>Image</label>
+                <input id="inputAddBookImage" type="text" name="Image">
             </div>
             <div class="field" id="fieldAddBookType">
                 <label>Type</label>
@@ -174,16 +171,16 @@
         <form id="frmEditBook" class="ui form" onsubmit="return false">
             <input id="inputEditBookId" type="hidden" />
             <div class="field">
-                <label>@Title</label>
-                <input id="inputEditBookTitle" type="text" name="@Title">
+                <label>Title</label>
+                <input id="inputEditBookTitle" type="text" name="Title">
             </div>
             <div class="field">
-                <label>@Author</label>
-                <input id="inputEditBookAuthor" type="text" name="@Author">
+                <label>Author</label>
+                <input id="inputEditBookAuthor" type="text" name="Author">
             </div>
             <div class="field">
-                <label>@Image</label>
-                <input id="inputEditBookImage" type="text" name="@Image">
+                <label>Image</label>
+                <input id="inputEditBookImage" type="text" name="Image">
             </div>
             <div class="field" id="fieldEditBookType">
                 <label>Type</label>
@@ -222,7 +219,7 @@
             var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function(book) {
                 return book.id().toString() === myId;
             });
-            console.log(bookToEdit);
+            $("#modalEditBook #inputEditBookId").val(bookToEdit.id());
             $("#modalEditBook #inputEditBookTitle").val(bookToEdit.Title());
             $("#modalEditBook #inputEditBookAuthor").val(bookToEdit.Author());
             $("#modalEditBook #inputEditBookImage").val(bookToEdit.Image());
@@ -241,6 +238,11 @@
             $("#modalEditBook .error").removeClass("error");
             $('#modalEditBook .form .message').hide();
         };
+
+        function addButtonBindings() {
+            $(".delete.book.button").on("click", onListDeleteClick);
+            $(".edit.book.button").on("click", onListEditClick);
+        }
 
         function BookViewModel(id, author, title, image, type) {
             var self = this;
@@ -261,10 +263,8 @@
 
             // Convert MVC Model to Knockout ViewModel
             $(@Html.Raw(jsonData)).each(function (index, element) {
-                console.log(element);
                 var book = new BookViewModel(element.id, element.Author, element.Title, element.Image, element.Type);
                 viewModel.books.push(book);
-                console.log(book);
             });
             ko.applyBindings(viewModel);
 
@@ -272,7 +272,7 @@
             $('#modalAddBook .ui.form').form({
                 on: 'blur',
                 fields: {
-                    @Title: {
+                    Title: {
                     identifier: 'inputAddBookTitle',
                     rules: [
                         {
@@ -281,7 +281,7 @@
                         }
                     ]
                     },
-                    @Author: {
+                    Author: {
                     identifier: 'inputAddBookAuthor',
                     rules: [
                         {
@@ -290,7 +290,7 @@
                         }
                     ]
                     },
-                    @Image: {
+                    Image: {
                     identifier: 'inputAddBookImage',
                     rules: [
                         {
@@ -301,26 +301,25 @@
                     }
                 },
                 onSuccess: function () {
-                    console.log($("#inputAddBookAuthor").val());
-                    var book = new BookViewModel(0,
+                    var newBook;
+                    var bookToAdd = new BookViewModel(0,
                         $("#inputAddBookAuthor").val(),
                         $("#inputAddBookTitle").val(),
                         $("#inputAddBookImage").val(),
                         $("#fieldAddBookType .active").text());
-                    console.log(ko.toJS(book));
                     var addBook = $.ajax({
                         type: "POST",
                         url: "/Books/CreateViaJSON",
-                        data: JSON.stringify(ko.toJS(book)),
+                        data: JSON.stringify(ko.toJS(bookToAdd)),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
-                        success: function (data) { book = data; }
+                        success: function (data) { newBook = data; }
                     });
                     addBook.done(function () {
+                        var book = new BookViewModel(newBook.id, newBook.Author, newBook.Title, newBook.Image, newBook.Type);
                         viewModel.books.push(book);
                         // When we add a new book we need to add a click handler to the delete button
-                        $(".delete.book.button").on("click", onListDeleteClick);
-                        $(".edit.book.button").on("click", onListEditClick);
+                        addButtonBindings();
                     });
                     $("#modalAddBook").modal('hide');
                     resetAddBookModal();
@@ -331,7 +330,7 @@
             $('#modalEditBook .ui.form').form({
                 on: 'blur',
                 fields: {
-                    @Title: {
+                    Title: {
                     identifier: 'inputEditBookTitle',
                     rules: [
                         {
@@ -340,7 +339,7 @@
                         }
                     ]
                     },
-                    @Author: {
+                    Author: {
                     identifier: 'inputEditBookAuthor',
                     rules: [
                         {
@@ -349,7 +348,7 @@
                         }
                     ]
                     },
-                    @Image: {
+                    Image: {
                     identifier: 'inputEditBookImage',
                     rules: [
                         {
@@ -360,23 +359,26 @@
                     }
                 },
                 onSuccess: function () {
-                    var book = {
-                            id: $("#inputEditBookId").val(),
-                            @Title: $("#inputEditBookTitle").val(),
-                            @Author: $("#inputEditBookAuthor").val(),
-                            Type: $("#fieldEditBookType .active").text(),
-                            @Image: $("#inputEditBookImage").val()
-                    };
+                    var oldBook = new BookViewModel(
+                        $("#inputEditBookId").val(),
+                        $("#inputEditBookAuthor").val(),
+                        $("#inputEditBookTitle").val(),
+                        $("#inputEditBookImage").val(),
+                        $("#fieldEditBookType .active").text());
                     var editBook = $.ajax({
                         type: "POST",
-                        url: "/Books/EditViaJSON/" + book.id,
-                        data: JSON.stringify(ko.toJS(book)),
+                        url: "/Books/EditViaJSON/" + oldBook.id(),
+                        data: JSON.stringify(ko.toJS(oldBook)),
                         contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (data) { book = data; }
+                        dataType: "json"
                     });
-                    edit.done(function () {
-                        //viewModel.books.push(book);
+                    editBook.done(function () {
+                        var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function (book) {
+                            return book.id().toString() === oldBook.id();
+                        });
+                        viewModel.books.replace(bookToEdit, oldBook);
+                        // When we add a new book we need to add a click handler to the delete button
+                        addButtonBindings();
                     });
                     $("#modalEditBook").modal('hide');
                     resetEditBookModal();
@@ -384,8 +386,7 @@
             });
 
             // Perform any event bindings on dynamic elements
-            $(".delete.book.button").on("click", onListDeleteClick);
-            $(".edit.book.button").on("click", onListEditClick);
+            addButtonBindings();
         });
 
         // Event bindings on static elements
@@ -445,9 +446,9 @@
                     url: "/Books/Delete/" + $("#modalDeleteBook .id").val()
                 });
                 deleteBook.done(function () {
-                    viewModel.books.remove(function (book) {
-                        return book.id == $("#modalDeleteBook .id").val();
-                    })
+                    viewModel.books.remove(function(book) {
+                        return book.id().toString() === $("#modalDeleteBook .id").val();
+                    });
                 });
             }
         );
