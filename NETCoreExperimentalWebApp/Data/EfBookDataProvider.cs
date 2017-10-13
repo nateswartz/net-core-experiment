@@ -1,26 +1,14 @@
-﻿using NETCoreExperimentalWebApp.Models;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
+using NETCoreExperimentalWebApp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace NETCoreExperimentalWebApp.Data
 {
-    public interface IBookData
-    {
-        IEnumerable<BookModel> GetAll();
-        BookModel Get(int? id);
-
-        BookModel Create(BookModel book);
-        bool Delete(int? id);
-        bool Update(int id, BookModel book);
-
-    }
-
-    public class EFBookData : IBookData
+    public class EfBookDataProvider : IBookDataProvider
     {
         private readonly WebAppDbContext _context;
-        public EFBookData(WebAppDbContext context)
+        public EfBookDataProvider(WebAppDbContext context)
         {
             _context = context;
         }

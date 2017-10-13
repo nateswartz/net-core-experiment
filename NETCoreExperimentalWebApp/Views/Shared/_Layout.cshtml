@@ -4,19 +4,30 @@
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - NETCoreExperimentalWebApp</title>
 
-    <environment include="Development">
-        <link rel="stylesheet" href="~/lib/semantic/dist/semantic.min.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    <link rel="stylesheet" href="~/lib/semantic/dist/semantic.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
 </head>
 <body>
     <div class="ui menu">
-        <a class="item header" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-        <a class="item header" asp-area="" asp-controller="Books" asp-action="Index">Books</a>
-
+        <a class="item header" asp-controller="Home" asp-action="Index">Home</a>
+        <a class="item header" asp-controller="Books" asp-action="Index">Books</a>
+        <div class="right menu">
+        @{
+            if (User.Identity.IsAuthenticated)
+            {
+                <form class="link item header" asp-controller="Account" asp-action="Logout" method="post">
+                    <div class="ui transparent input">
+                        <input class="link item header" type="submit" value="Logout"/>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <a class="item header" asp-controller="Account" asp-action="Login">Login</a>
+            }
+        }
+        </div>
     </div>
     <div class="container body-content">
         @RenderBody()

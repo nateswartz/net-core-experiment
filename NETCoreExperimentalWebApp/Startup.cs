@@ -34,7 +34,7 @@ namespace NETCoreExperimentalWebApp
                 .AddEntityFrameworkStores<WebAppDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddScoped<IBookData, EFBookData>();
+            services.AddScoped<IBookDataProvider, EfBookDataProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

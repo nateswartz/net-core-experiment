@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NETCoreExperimentalWebApp.Models
+namespace NETCoreExperimentalWebApp.Models.AccountViewModels
 {
-    public class AccountModel
+    public class LoginViewModel
     {
         [Required]
         public string Username { get; set; }

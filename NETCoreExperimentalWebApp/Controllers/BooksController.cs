@@ -8,17 +8,17 @@ namespace NETCoreExperimentalWebApp.Controllers
     [Authorize]
     public class BooksController : Controller
     {
-        private readonly IBookData _bookData;
+        private readonly IBookDataProvider _bookDataProvider;
 
-        public BooksController(IBookData bookData)
+        public BooksController(IBookDataProvider bookDataProvider)
         {
-            _bookData = bookData;
+            _bookDataProvider = bookDataProvider;
         }
 
         // GET: Books
         public IActionResult Index()
         {
-            return View(_bookData.GetAll());
+            return View(_bookDataProvider.GetAll());
         }
 
         // GET: Books/Details/5
@@ -29,7 +29,7 @@ namespace NETCoreExperimentalWebApp.Controllers
                 return NotFound();
             }
 
-            var book = _bookData.Get(id);
+            var book = _bookDataProvider.Get(id);
             if (book == null)
             {
                 return NotFound();
@@ -44,7 +44,7 @@ namespace NETCoreExperimentalWebApp.Controllers
             book.id = 0;
             if (ModelState.IsValid)
             {
-                var newBook = _bookData.Create(book);
+                var newBook = _bookDataProvider.Create(book);
                 return new ObjectResult(newBook);
             }
             return BadRequest("Book data incomplete");
@@ -55,7 +55,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _bookData.Update(id, book);
+                _bookDataProvider.Update(id, book);
                 return new ObjectResult(true);
             }
             return BadRequest("Book data incomplete");
@@ -65,7 +65,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            _bookData.Delete(id);
+            _bookDataProvider.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
