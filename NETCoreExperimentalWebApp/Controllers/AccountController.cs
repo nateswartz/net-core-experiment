@@ -65,7 +65,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)

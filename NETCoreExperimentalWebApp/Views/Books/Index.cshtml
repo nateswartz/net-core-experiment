@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    var jsonData = JsonConvert.SerializeObject(Model);
 }
 
 <div class="ui padded grid">
@@ -262,7 +261,7 @@
             $('.ui.dropdown').dropdown();
 
             // Convert MVC Model to Knockout ViewModel
-            $(@Html.Raw(jsonData)).each(function (index, element) {
+            $(@Html.Raw(JsonConvert.SerializeObject(Model))).each(function (index, element) {
                 var book = new BookViewModel(element.id, element.Author, element.Title, element.Image, element.Type);
                 viewModel.books.push(book);
             });
