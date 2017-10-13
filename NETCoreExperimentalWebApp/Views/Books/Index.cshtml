@@ -309,7 +309,7 @@
                         $("#fieldAddBookType .active").text());
                     var addBook = $.ajax({
                         type: "POST",
-                        url: "/Books/CreateViaJSON",
+                        url: "/Books/Create",
                         data: JSON.stringify(ko.toJS(bookToAdd)),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -367,7 +367,7 @@
                         $("#fieldEditBookType .active").text());
                     var editBook = $.ajax({
                         type: "POST",
-                        url: "/Books/EditViaJSON/" + oldBook.id(),
+                        url: "/Books/Edit/" + oldBook.id(),
                         data: JSON.stringify(ko.toJS(oldBook)),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json"
