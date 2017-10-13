@@ -1,15 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NETCoreExperimentalWebApp.Models;
 
 namespace NETCoreExperimentalWebApp.Data
 {
-    public class NETCoreExperimentalWebAppContext : DbContext
+    public class WebAppDbContext : IdentityDbContext<ApplicationUser>
     {
-        public NETCoreExperimentalWebAppContext (DbContextOptions<NETCoreExperimentalWebAppContext> options)
+        public WebAppDbContext (DbContextOptions<WebAppDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Book> Book { get; set; }
+        public DbSet<BookModel> Book { get; set; }
     }
 }

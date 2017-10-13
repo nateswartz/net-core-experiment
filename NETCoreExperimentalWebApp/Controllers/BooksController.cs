@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NETCoreExperimentalWebApp.Data;
 using NETCoreExperimentalWebApp.Models;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private readonly IBookData _bookData;
@@ -49,7 +51,7 @@ namespace NETCoreExperimentalWebApp.Controllers
 
         // POST: Books/Create
         [HttpPost]
-        public IActionResult Create([Bind("id,Title,Author,Type,Image")] Book book)
+        public IActionResult Create([Bind("id,Title,Author,Type,Image")] BookModel book)
         {
             if (ModelState.IsValid)
             {
@@ -60,7 +62,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateViaJSON([FromBody]Book book)
+        public IActionResult CreateViaJSON([FromBody]BookModel book)
         {
             book.id = 0;
             if (ModelState.IsValid)
@@ -91,7 +93,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public IActionResult Edit(int id, [Bind("id,Title,Author,Type,Image")] Book book)
+        public IActionResult Edit(int id, [Bind("id,Title,Author,Type,Image")] BookModel book)
         {
             if (id != book.id)
             {
@@ -107,7 +109,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditViaJSON(int id, [FromBody]Book book)
+        public IActionResult EditViaJSON(int id, [FromBody]BookModel book)
         {
             if (ModelState.IsValid)
             {

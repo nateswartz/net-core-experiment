@@ -11,7 +11,7 @@ using NETCoreExperimentalWebApp.Data;
 
 namespace NETCoreExperimentalWebApp.Migrations
 {
-    [DbContext(typeof(NETCoreExperimentalWebAppContext))]
+    [DbContext(typeof(WebAppDbContext))]
     [Migration("20171001005036_InitialCreate")]
     partial class InitialCreate
     {

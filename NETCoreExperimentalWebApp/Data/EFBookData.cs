@@ -8,34 +8,34 @@ namespace NETCoreExperimentalWebApp.Data
 {
     public interface IBookData
     {
-        IEnumerable<Book> GetAll();
-        Book Get(int? id);
+        IEnumerable<BookModel> GetAll();
+        BookModel Get(int? id);
 
-        Book Create(Book book);
+        BookModel Create(BookModel book);
         bool Delete(int? id);
-        bool Update(int id, Book book);
+        bool Update(int id, BookModel book);
 
     }
 
     public class EFBookData : IBookData
     {
-        private readonly NETCoreExperimentalWebAppContext _context;
-        public EFBookData(NETCoreExperimentalWebAppContext context)
+        private readonly WebAppDbContext _context;
+        public EFBookData(WebAppDbContext context)
         {
             _context = context;
         }
 
-        public IEnumerable<Book> GetAll()
+        public IEnumerable<BookModel> GetAll()
         {
             return _context.Book.ToList();
         }
 
-        public Book Get(int? id)
+        public BookModel Get(int? id)
         {
             return _context.Book.SingleOrDefault(m => m.id == id);
         }
 
-        public Book Create(Book book)
+        public BookModel Create(BookModel book)
         {
             var result = _context.Add(book).Entity;
             _context.SaveChanges();
@@ -54,7 +54,7 @@ namespace NETCoreExperimentalWebApp.Data
             return false;
         }
 
-        public bool Update(int id, Book book)
+        public bool Update(int id, BookModel book)
         {
             try
             {

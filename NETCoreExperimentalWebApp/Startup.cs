@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NETCoreExperimentalWebApp.Data;
 using NETCoreExperimentalWebApp.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace NETCoreExperimentalWebApp
 {
@@ -26,8 +27,12 @@ namespace NETCoreExperimentalWebApp
                     options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
                 });
 
-            services.AddDbContext<NETCoreExperimentalWebAppContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("NETCoreExperimentalWebAppContext")));
+            services.AddDbContext<WebAppDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<WebAppDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<IBookData, EFBookData>();
         }
@@ -46,6 +51,8 @@ namespace NETCoreExperimentalWebApp
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
