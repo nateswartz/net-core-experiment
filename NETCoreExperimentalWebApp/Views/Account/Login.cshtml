@@ -1,24 +1,24 @@
 ﻿@using Newtonsoft.Json
-@model NETCoreExperimentalWebApp.Models.AccountViewModels.LoginViewModel
+@model LoginViewModel
 @{
     ViewData["Title"] = "Log in";
 }
 
 <h2 class="ui header">@ViewData["Title"]</h2>
-<div>
+<div class="ui left floated raised very padded text container segment">
     <form class="ui form" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
         <div class="ui error message"></div>
         <div class="field">
             <label asp-for="Username"></label>
-            <input asp-for="Username"/>
+            <input asp-for="Username" />
         </div>
         <div class="field">
             <label asp-for="Password"></label>
-            <input asp-for="Password"/>
+            <input asp-for="Password" />
         </div>
         <div class="field">
             <div class="ui checkbox">
-                <input asp-for="RememberMe"/>
+                <input asp-for="RememberMe" />
                 <label asp-for="RememberMe"></label>
             </div>
         </div>
@@ -26,11 +26,12 @@
             <button type="submit" class="ui button">Log in</button>
         </div>
     </form>
+    <div class="ui divider"></div>
+    <div>
+        <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
+    </div>
 </div>
-<div class="ui divider"></div>
-<div>
-    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
-</div>
+
 
 @section Scripts {
     <script>
@@ -38,13 +39,12 @@
             $('.ui.form')
                 .form({
                     fields: {
-                        Password: 'empty',
-                        Username: 'empty'
+                        Username: 'empty',
+                        Password: 'empty'
                     }
                 });
-            var obj = @Html.Raw(JsonConvert.SerializeObject(Model));
-            if (obj !== null) {
-                console.log("error");
+            var jsonModel = @Html.Raw(JsonConvert.SerializeObject(Model));
+            if (jsonModel !== null) {
                 $('.form .error.message').html('Login failed').show();
             };
         });
