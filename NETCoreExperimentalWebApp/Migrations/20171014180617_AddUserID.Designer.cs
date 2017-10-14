@@ -12,9 +12,10 @@ using System;
 namespace NETCoreExperimentalWebApp.Migrations
 {
     [DbContext(typeof(WebAppDbContext))]
-    partial class NETCoreExperimentalWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20171014180617_AddUserID")]
+    partial class AddUserID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

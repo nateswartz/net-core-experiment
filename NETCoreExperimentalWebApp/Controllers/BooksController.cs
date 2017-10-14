@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NETCoreExperimentalWebApp.Data;
 using NETCoreExperimentalWebApp.Models;
@@ -10,15 +11,19 @@ namespace NETCoreExperimentalWebApp.Controllers
     {
         private readonly IBookDataProvider _bookDataProvider;
 
-        public BooksController(IBookDataProvider bookDataProvider)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public BooksController(IBookDataProvider bookDataProvider, UserManager<ApplicationUser> userManager)
         {
             _bookDataProvider = bookDataProvider;
+            _userManager = userManager;
         }
 
         // GET: Books
         public IActionResult Index()
         {
-            return View(_bookDataProvider.GetAll());
+            var id = _userManager.GetUserId(User);
+            return View(_bookDataProvider.GetForUser(id));
         }
 
         // GET: Books/Details/5
@@ -41,6 +46,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         [HttpPost]
         public IActionResult Create([FromBody]BookModel book)
         {
+            book.userId = _userManager.GetUserId(User);
             book.id = 0;
             if (ModelState.IsValid)
             {

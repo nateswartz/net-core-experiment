@@ -71,5 +71,10 @@ namespace NETCoreExperimentalWebApp.Data
         {
             return _context.Book.Any(e => e.id == id);
         }
+
+        public IEnumerable<BookModel> GetForUser(string userId)
+        {
+            return _context.Book.Where(e => e.userId == userId).ToList();
+        }
     }
 }

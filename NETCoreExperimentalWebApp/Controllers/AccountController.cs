@@ -8,7 +8,6 @@ using NETCoreExperimentalWebApp.Models.AccountViewModels;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
-    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

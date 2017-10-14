@@ -6,6 +6,7 @@ namespace NETCoreExperimentalWebApp.Data
     public interface IBookDataProvider
     {
         IEnumerable<BookModel> GetAll();
+        IEnumerable<BookModel> GetForUser(string userId);
         BookModel Get(int? id);
         BookModel Create(BookModel book);
         bool Delete(int? id);
