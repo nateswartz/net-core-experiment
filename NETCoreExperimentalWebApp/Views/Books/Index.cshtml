@@ -74,10 +74,10 @@
         <div class="column">
             <div data-bind="foreach: books" id="gridItems" class="ui link cards column">
                 <div class="ui card">
-                    <a class="image" data-bind="attr: { href: 'Books/Edit/' + id }">
+                    <a class="image edit book" data-bind="attr: { 'data-id': id }">
                         <img data-bind="attr: { src: Image }" />
                     </a>
-                    <a class="content" data-bind="attr: { href: 'Books/Edit/' + id }">
+                    <a class="content edit book" data-bind="attr: { 'data-id': id }">
                         <div class="header" data-bind="text: Title"></div>
                         <div class="meta" data-bind="text: Author"></div>
                     </a>
@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                             <div class="ui button">
-                                <a data-bind="attr: { href: 'Books/Details/' + id }">
+                                <a data-bind="attr: { href: 'Books/Details/' + id() }">
                                     <i class="green info icon large"></i>
                                 </a>
                             </div>
@@ -214,6 +214,7 @@
         };
 
         function onListEditClick() {
+            resetEditBookModal();
             var myId = $(this).attr('data-id');
             var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function(book) {
                 return book.id().toString() === myId;
@@ -239,8 +240,8 @@
         };
 
         function addButtonBindings() {
-            $(".delete.book.button").on("click", onListDeleteClick);
-            $(".edit.book.button").on("click", onListEditClick);
+            $(".delete.book").on("click", onListDeleteClick);
+            $(".edit.book").on("click", onListEditClick);
         }
 
         function BookViewModel(id, author, title, image, type) {
