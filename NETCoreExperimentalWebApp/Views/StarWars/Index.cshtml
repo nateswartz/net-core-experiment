@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Star Wars API";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="ui header">Star Wars API</h2>
+<h3 class="ui header">Lookup Person</h3>
+<form class="ui form">
+    <div class="field">
+        <label>ID</label>
+        <input type="text" name="id">
+    </div>
+    <button class="ui button" asp-action="Person">Submit</button>
+</form>
+

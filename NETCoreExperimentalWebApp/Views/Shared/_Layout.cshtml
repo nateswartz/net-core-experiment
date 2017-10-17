@@ -12,6 +12,7 @@
     <div class="ui menu">
         <a class="item header" asp-controller="Home" asp-action="Index">Home</a>
         <a class="item header" asp-controller="Books" asp-action="Index">Books</a>
+        <a class="item header" asp-controller="StarWars" asp-action="Index">Star Wars API</a>
         <div class="right menu">
         @{
             if (User.Identity.IsAuthenticated)
