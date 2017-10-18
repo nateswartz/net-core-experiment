@@ -1,5 +1,6 @@
 ﻿using NETCoreExperimentalWebApp.Models;
 using System.Collections.Generic;
+using NETCoreExperimentalWebApp.Models.StarWarsModels;
 
 namespace NETCoreExperimentalWebApp.Data
 {

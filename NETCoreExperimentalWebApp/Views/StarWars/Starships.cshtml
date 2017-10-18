@@ -1,4 +1,5 @@
-﻿@model IEnumerable<NETCoreExperimentalWebApp.Models.StarshipModel>
+﻿@using NETCoreExperimentalWebApp.Models.StarWarsModels
+@model IEnumerable<NETCoreExperimentalWebApp.Models.StarWarsModels.StarshipModel>
 
 @{
     ViewData["Title"] = "Starships";
@@ -18,7 +19,10 @@
         <div class="content">
             <div class="meta">@Html.DisplayFor(modelItem => item.Model)</div>
             <div class="meta">@Html.DisplayFor(modelItem => item.Manufacturer)</div>
-            <div class="meta">@Html.DisplayFor(modelItem => item.Cost) credits</div>
+            @if (item.Cost != null)
+            {
+                <div class="meta">@Html.DisplayFor(modelItem => item.Cost) credits</div>
+            }
         </div>
         <div class="content">
             <div class="description">@Html.DisplayFor(model => item.Length) meters</div>

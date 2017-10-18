@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
-namespace NETCoreExperimentalWebApp.Models
+namespace NETCoreExperimentalWebApp.Models.StarWarsModels
 {
     public class StarshipResponse
     {
@@ -21,7 +21,7 @@ namespace NETCoreExperimentalWebApp.Models
 
         [JsonProperty("cost_in_credits")]
         [DisplayFormat(DataFormatString = "{0:#,#}")]
-        public string Cost { get; set; }
+        public long? Cost { get; set; }
 
         public string Length { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace NETCoreExperimentalWebApp.Models
+﻿namespace NETCoreExperimentalWebApp.Models.StarWarsModels
 {
     public class PersonModel
     {
