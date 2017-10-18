@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using NETCoreExperimentalWebApp.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using NETCoreExperimentalWebApp.Data;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
     public class StarWarsController : Controller
     {
-        private HttpClient _client;
+        private IStarWarsDataProvider _provider;
 
-        public StarWarsController()
+        public StarWarsController(IStarWarsDataProvider provider)
         {
-            _client = new HttpClient();
-            _client.BaseAddress = new Uri("https://swapi.co/api/");
+            _provider = provider;
         }
 
         public IActionResult Index()
@@ -27,9 +20,15 @@ namespace NETCoreExperimentalWebApp.Controllers
         [HttpGet]
         public IActionResult Person(int id)
         {
-            var result = _client.GetAsync("people/" + id).Result;
-            var data = result.Content.ReadAsStringAsync().Result;
-            return View(JsonConvert.DeserializeObject<PersonModel>(data));
+            var person = _provider.GetPerson(id);
+            return View(person);
+        }
+
+        [HttpGet]
+        public IActionResult Starships()
+        {
+            var starships = _provider.GetStarships();
+            return View(starships);
         }
     }
 }
