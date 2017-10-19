@@ -1,4 +1,5 @@
 ﻿@using NETCoreExperimentalWebApp.Models.StarWarsModels
+@using Newtonsoft.Json
 @model IEnumerable<StarshipModel>
 
 @{
@@ -42,3 +43,32 @@
 }
 </div>
 
+@section Scripts {
+    <script>
+        viewModel = {
+            starships: ko.observableArray()
+        };
+
+        function StarshipViewModel(name, model, manufacturer, cost, length, hyperdriverating, mglt) {
+            var self = this;
+            self.Name = ko.observable(name);
+            self.Model = ko.observable(model);
+            self.Manufacturer = ko.observable(manufacturer);
+            self.Cost = ko.observable(cost);
+            self.Length = ko.observable(length);
+            self.HyperdriveRating = ko.observable(hyperdriverating);
+            self.MGLT = ko.observable(mglt);
+        };
+
+        $(document).ready(function () {
+            // Initialize dropdowns
+            $('.ui.dropdown').dropdown();
+
+            // Convert MVC Model to Knockout ViewModel
+            $(@Html.Raw(JsonConvert.SerializeObject(Model))).each(function (index, element) {
+                var starship = new BookViewModel(element.Name, element.Model, element.Manufacturer, element.Cost, element.Length, element.HyperdriveRating, element.MGLT);
+                viewModel.starships.push(starship);
+            });
+            ko.applyBindings(viewModel);
+        });
+    </script>
