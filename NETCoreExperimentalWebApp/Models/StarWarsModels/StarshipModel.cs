@@ -23,13 +23,14 @@ namespace NETCoreExperimentalWebApp.Models.StarWarsModels
         [DisplayFormat(DataFormatString = "{0:#,#}")]
         public long? Cost { get; set; }
 
-        public string Length { get; set; }
+        [DisplayFormat(DataFormatString = "{0:#,#}")]
+        public double? Length { get; set; }
 
         [JsonProperty("hyperdrive_rating")]
         [DisplayName("Hyperdrive Rating")]
-        public string HyperdriveRating { get; set; }
+        public double? HyperdriveRating { get; set; }
 
-        public string MGLT { get; set; }
+        public int? MGLT { get; set; }
     }
 }
 /*

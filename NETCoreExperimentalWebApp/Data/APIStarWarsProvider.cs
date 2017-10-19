@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -11,6 +10,8 @@ namespace NETCoreExperimentalWebApp.Data
     public class APIStarWarsProvider : IStarWarsDataProvider
     {
         private readonly HttpClient _client;
+
+        private List<StarshipModel> _starshipCache;
 
         public APIStarWarsProvider()
         {
@@ -27,6 +28,11 @@ namespace NETCoreExperimentalWebApp.Data
 
         public IEnumerable<StarshipModel> GetStarships()
         {
+            if (_starshipCache != null)
+            {
+                return _starshipCache;
+            }
+
             var settings = new JsonSerializerSettings
             {
                 Error = IgnoreErrorConvertingUnknown
@@ -44,6 +50,7 @@ namespace NETCoreExperimentalWebApp.Data
                 starships.AddRange(responseObj.results);
                 page++;
             } while (count > starships.Count);
+            _starshipCache = starships;
             return starships;
         }
 
