@@ -8,39 +8,24 @@
 }
 
 <h2>Starships</h2>
+<div class="ui remove button">Remove X-Wing</div>
 
-
-<div data-bind="foreach: books" id="gridItems" class="ui link cards column">
-@foreach (var item in Model)
-{
+<div data-bind="foreach: starships" id="gridItems" class="ui link cards column">
     <div class="ui card">
         <div class="content">
-            <div class="header">@Html.DisplayFor(modelItem => item.Name)</div>
+            <div class="header" data-bind="text: Name"></div>
         </div>
         <div class="content">
-            <div class="meta">@Html.DisplayFor(modelItem => item.Model)</div>
-            <div class="meta">@Html.DisplayFor(modelItem => item.Manufacturer)</div>
-            @if (item.Cost != null)
-            {
-                <div class="meta">@Html.DisplayFor(modelItem => item.Cost) credits</div>
-            }
+            <div class="meta" data-bind="text: Model"></div>
+            <div class="meta" data-bind="text: Manufacturer"></div>
+            <div class="meta" data-bind="text: Cost() + ' credits'"></div>
         </div>
         <div class="content">
-            @if (item.Length != null)
-            {
-                <div class="description">@Html.DisplayFor(model => item.Length) meters</div>
-            }
-            @if (item.HyperdriveRating != null)
-            {
-                <div class="description">@Html.DisplayNameFor(model => model.HyperdriveRating): @Html.DisplayFor(modelItem => item.HyperdriveRating)</div>
-            }
-            @if (item.MGLT != null)
-            {
-                <div class="description">@Html.DisplayNameFor(model => model.MGLT): @Html.DisplayFor(modelItem => item.MGLT)</div>
-            }
+            <div class="description" data-bind="text: Length() + ' meters'"></div>
+            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating()"></div>
+            <div class="description" data-bind="text: 'MGLT: ' + MGLT()"></div>
         </div>
     </div>
-}
 </div>
 
 @section Scripts {
@@ -60,15 +45,38 @@
             self.MGLT = ko.observable(mglt);
         };
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Initialize dropdowns
             $('.ui.dropdown').dropdown();
 
             // Convert MVC Model to Knockout ViewModel
             $(@Html.Raw(JsonConvert.SerializeObject(Model))).each(function (index, element) {
-                var starship = new BookViewModel(element.Name, element.Model, element.Manufacturer, element.Cost, element.Length, element.HyperdriveRating, element.MGLT);
+                console.log(element);
+                var starship = new StarshipViewModel(
+                    element.Name,
+                    element.Model,
+                    element.Manufacturer,
+                    element.cost_in_credits,
+                    element.Length,
+                    element.hyperdrive_rating,
+                    element.MGLT);
                 viewModel.starships.push(starship);
+                console.log(starship);
             });
             ko.applyBindings(viewModel);
         });
+
+        function removeStarshipByName(name) {
+            console.log("here");
+            viewModel.starships.remove(function(starship) {
+                return starship.Name().toString() === name;
+            });
+        };
+
+        $(".remove").on("click",
+            function() {
+                removeStarshipByName("X-wing");
+            });
+
     </script>
+}
