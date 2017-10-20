@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace NETCoreExperimentalWebApp.Models.StarWarsModels
 {
@@ -19,16 +16,11 @@ namespace NETCoreExperimentalWebApp.Models.StarWarsModels
 
         public string Manufacturer { get; set; }
 
-        [JsonProperty("cost_in_credits")]
-        [DisplayFormat(DataFormatString = "{0:#,#}")]
-        public long? Cost { get; set; }
+        public long? Cost_In_Credits { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:#,#}")]
         public double? Length { get; set; }
 
-        [JsonProperty("hyperdrive_rating")]
-        [DisplayName("Hyperdrive Rating")]
-        public double? HyperdriveRating { get; set; }
+        public double? Hyperdrive_Rating { get; set; }
 
         public int? MGLT { get; set; }
     }

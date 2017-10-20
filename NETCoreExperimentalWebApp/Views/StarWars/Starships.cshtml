@@ -7,8 +7,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Starships</h2>
-<div class="ui remove button">Remove X-Wing</div>
+<h2 class="ui header">Starships</h2>
+<div class="ui input">
+    <input type="text" class="remove starship input"/>
+</div>
+<div class="ui remove button">Remove Starship</div>
+<div class="ui divider"></div>
 
 <div data-bind="foreach: starships" id="gridItems" class="ui link cards column">
     <div class="ui card">
@@ -18,31 +22,21 @@
         <div class="content">
             <div class="meta" data-bind="text: Model"></div>
             <div class="meta" data-bind="text: Manufacturer"></div>
-            <div class="meta" data-bind="text: Cost() + ' credits'"></div>
+            <div class="meta" data-bind="text: Cost_In_Credits() + ' credits'"></div>
         </div>
         <div class="content">
             <div class="description" data-bind="text: Length() + ' meters'"></div>
-            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating()"></div>
+            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + Hyperdrive_Rating()"></div>
             <div class="description" data-bind="text: 'MGLT: ' + MGLT()"></div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipViewModel.js")'></script>
     <script>
         viewModel = {
             starships: ko.observableArray()
-        };
-
-        function StarshipViewModel(name, model, manufacturer, cost, length, hyperdriverating, mglt) {
-            var self = this;
-            self.Name = ko.observable(name);
-            self.Model = ko.observable(model);
-            self.Manufacturer = ko.observable(manufacturer);
-            self.Cost = ko.observable(cost);
-            self.Length = ko.observable(length);
-            self.HyperdriveRating = ko.observable(hyperdriverating);
-            self.MGLT = ko.observable(mglt);
         };
 
         $(document).ready(function() {
@@ -50,32 +44,20 @@
             $('.ui.dropdown').dropdown();
 
             // Convert MVC Model to Knockout ViewModel
-            $(@Html.Raw(JsonConvert.SerializeObject(Model))).each(function (index, element) {
-                console.log(element);
-                var starship = new StarshipViewModel(
-                    element.Name,
-                    element.Model,
-                    element.Manufacturer,
-                    element.cost_in_credits,
-                    element.Length,
-                    element.hyperdrive_rating,
-                    element.MGLT);
-                viewModel.starships.push(starship);
-                console.log(starship);
-            });
+            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.starships);
             ko.applyBindings(viewModel);
         });
 
         function removeStarshipByName(name) {
-            console.log("here");
             viewModel.starships.remove(function(starship) {
                 return starship.Name().toString() === name;
             });
         };
 
         $(".remove").on("click",
-            function() {
-                removeStarshipByName("X-wing");
+            function () {
+                removeStarshipByName($('.remove.input').val());
+                $('.remove.input').val('');
             });
 
     </script>
