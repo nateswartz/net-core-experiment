@@ -196,8 +196,8 @@
 </div>
 
 @section Scripts {
+    <script type="text/javascript" src='@Url.Content("~/js/KOModels/BookViewModel.js")'></script>
     <script>
-
         // Do this right away
         if (localStorage.getItem('showGrid') === 'true') {
             $('#listItems').hide();
@@ -244,28 +244,16 @@
             $(".edit.book").on("click", onListEditClick);
         }
 
-        function BookViewModel(id, author, title, image, type) {
-            var self = this;
-            self.id = ko.observable(id);
-            self.Author = ko.observable(author);
-            self.Title = ko.observable(title);
-            self.Image = ko.observable(image);
-            self.Type = ko.observable(type);
-        };
-
         viewModel = {
             books: ko.observableArray()
         };
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Initialize dropdowns
             $('.ui.dropdown').dropdown();
 
             // Convert MVC Model to Knockout ViewModel
-            $(@Html.Raw(JsonConvert.SerializeObject(Model))).each(function (index, element) {
-                var book = new BookViewModel(element.id, element.Author, element.Title, element.Image, element.Type);
-                viewModel.books.push(book);
-            });
+            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.books);
             ko.applyBindings(viewModel);
 
             // Setup add form
@@ -273,53 +261,51 @@
                 on: 'blur',
                 fields: {
                     Title: {
-                    identifier: 'inputAddBookTitle',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter a Title'
-                        }
-                    ]
+                        identifier: 'inputAddBookTitle',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a Title'
+                            }
+                        ]
                     },
                     Author: {
-                    identifier: 'inputAddBookAuthor',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter an Author'
-                        }
-                    ]
+                        identifier: 'inputAddBookAuthor',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Author'
+                            }
+                        ]
                     },
                     Image: {
-                    identifier: 'inputAddBookImage',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter an Image'
-                        }
-                    ]
+                        identifier: 'inputAddBookImage',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Image'
+                            }
+                        ]
                     }
                 },
                 onSuccess: function () {
-                    var newBook;
                     var bookToAdd = new BookViewModel(0,
                         $("#inputAddBookAuthor").val(),
                         $("#inputAddBookTitle").val(),
                         $("#inputAddBookImage").val(),
                         $("#fieldAddBookType .active").text());
-                    var addBook = $.ajax({
+                    $.ajax({
                         type: "POST",
                         url: "/Books/Create",
                         data: JSON.stringify(ko.toJS(bookToAdd)),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
-                        success: function (data) { newBook = data; }
-                    });
-                    addBook.done(function () {
-                        var book = new BookViewModel(newBook.id, newBook.Author, newBook.Title, newBook.Image, newBook.Type);
-                        viewModel.books.push(book);
-                        // When we add a new book we need to add a click handler to the delete button
-                        addButtonBindings();
+                        success: function (data) {
+                            var book = ko.mapping.fromJS(data);
+                            viewModel.books.push(book);
+                            // When we add a new book we need to add a click handler to the delete button
+                            addButtonBindings();
+                        }
                     });
                     $("#modalAddBook").modal('hide');
                     resetAddBookModal();
@@ -331,31 +317,31 @@
                 on: 'blur',
                 fields: {
                     Title: {
-                    identifier: 'inputEditBookTitle',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter a Title'
-                        }
-                    ]
+                        identifier: 'inputEditBookTitle',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a Title'
+                            }
+                        ]
                     },
                     Author: {
-                    identifier: 'inputEditBookAuthor',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter an Author'
-                        }
-                    ]
+                        identifier: 'inputEditBookAuthor',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Author'
+                            }
+                        ]
                     },
                     Image: {
-                    identifier: 'inputEditBookImage',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter an Image'
-                        }
-                    ]
+                        identifier: 'inputEditBookImage',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Image'
+                            }
+                        ]
                     }
                 },
                 onSuccess: function () {
@@ -370,15 +356,15 @@
                         url: "/Books/Edit/" + oldBook.id(),
                         data: JSON.stringify(ko.toJS(oldBook)),
                         contentType: "application/json; charset=utf-8",
-                        dataType: "json"
-                    });
-                    editBook.done(function () {
-                        var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function (book) {
-                            return book.id().toString() === oldBook.id();
-                        });
-                        viewModel.books.replace(bookToEdit, oldBook);
-                        // When we add a new book we need to add a click handler to the delete button
-                        addButtonBindings();
+                        dataType: "json",
+                        success: function() {
+                            var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function (book) {
+                                return book.id().toString() === oldBook.id();
+                            });
+                            viewModel.books.replace(bookToEdit, oldBook);
+                            // When we add a new book we need to add a click handler to the delete button
+                            addButtonBindings();
+                        }
                     });
                     $("#modalEditBook").modal('hide');
                     resetEditBookModal();
@@ -407,7 +393,7 @@
         );
 
         $("#btnAddBook").on("click",
-            function () {
+            function() {
                 resetAddBookModal();
                 $("#modalAddBook").modal('show');
             }
@@ -427,31 +413,30 @@
         );
 
         $("#btnCancelEditBook").on("click",
-            function () {
+            function() {
                 $("#modalEditBook").modal('hide');
                 resetEditBookModal();
             }
         );
 
         $("#btnConfirmEditBook").on("click",
-            function () {
+            function() {
                 $('#modalEditBook .form .message').show();
             }
         );
 
         $("#btnConfirmDeleteBook").on("click",
-            function () {
-                var deleteBook = $.ajax({
+            function() {
+                $.ajax({
                     type: "POST",
-                    url: "/Books/Delete/" + $("#modalDeleteBook .id").val()
-                });
-                deleteBook.done(function () {
-                    viewModel.books.remove(function(book) {
-                        return book.id().toString() === $("#modalDeleteBook .id").val();
-                    });
+                    url: "/Books/Delete/" + $("#modalDeleteBook .id").val(),
+                    success: function() {
+                        viewModel.books.remove(function(book) {
+                            return book.id().toString() === $("#modalDeleteBook .id").val();
+                        });
+                    }
                 });
             }
         );
-
     </script>
-}
+    }
