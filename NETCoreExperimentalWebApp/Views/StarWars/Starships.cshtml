@@ -8,13 +8,17 @@
 }
 
 <h2 class="ui header">Starships</h2>
+<div class="ui text">Filter By Name</div>
 <div class="ui input">
-    <input type="text" class="remove starship input"/>
+    <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" autocomplete="off">
 </div>
-<div class="ui remove button">Remove Starship</div>
+<div class="ui text">Filter By Cost (Greater Than)</div>
+<div class="ui input">
+    <input class="filter starship cost input" data-bind="value: costQuery, valueUpdate: 'keyup'" autocomplete="off">
+</div>
 <div class="ui divider"></div>
 
-<div data-bind="foreach: starships" id="gridItems" class="ui link cards column">
+<div data-bind="foreach: filteredStarships" id="gridItems" class="ui link cards column">
     <div class="ui card">
         <div class="content">
             <div class="header" data-bind="text: Name"></div>
@@ -36,29 +40,36 @@
     <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipViewModel.js")'></script>
     <script>
         viewModel = {
-            starships: ko.observableArray()
+            allStarships: ko.observableArray(),
+            nameQuery: ko.observable(''),
+            costQuery: ko.observable('')
         };
 
-        $(document).ready(function() {
-            // Initialize dropdowns
-            $('.ui.dropdown').dropdown();
-
-            // Convert MVC Model to Knockout ViewModel
-            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.starships);
-            ko.applyBindings(viewModel);
+        viewModel.filteredStarships = ko.computed(function () {
+            if (viewModel.nameQuery() != "") {
+                return filterByName(viewModel.nameQuery());
+            } else {
+                return filterByCost(viewModel.costQuery());
+            }     
         });
 
-        function removeStarshipByName(name) {
-            viewModel.starships.remove(function(starship) {
-                return starship.Name().toString() === name;
+        function filterByName(query) {
+            return viewModel.allStarships().filter(function (starship) {
+                return starship.Name().toLowerCase().indexOf(query.toLowerCase()) >= 0;
             });
         };
 
-        $(".remove").on("click",
-            function () {
-                removeStarshipByName($('.remove.input').val());
-                $('.remove.input').val('');
+        function filterByCost(query) {
+            return viewModel.allStarships().filter(function (starship) {
+                return starship.Cost_In_Credits() > query;
             });
+        };
+
+        $(document).ready(function () {
+            // Convert MVC Model to Knockout ViewModel
+            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.allStarships);
+            ko.applyBindings(viewModel);
+        });
 
     </script>
 }
