@@ -12,8 +12,14 @@
 <div class="ui input">
     <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" autocomplete="off">
 </div>
-<div class="ui text">Filter By Cost (Greater Than)</div>
 <div class="ui input">
+    <div class="ui label">Filter By Cost</div>
+    <select class="ui dropdown">
+        <option value="">Operator</option>
+        <option value="lt"><</option>
+        <option value="gt">></option>
+    </select>
+    </div>
     <input class="filter starship cost input" data-bind="value: costQuery, valueUpdate: 'keyup'" autocomplete="off">
 </div>
 <div class="ui divider"></div>
@@ -46,9 +52,12 @@
         };
 
         viewModel.filteredStarships = ko.computed(function () {
+            console.log("name = " + viewModel.nameQuery());
+            console.log("cost = " + viewModel.costQuery())
             if (viewModel.nameQuery() != "") {
                 return filterByName(viewModel.nameQuery());
             } else {
+                console.log("Filter by cost");
                 return filterByCost(viewModel.costQuery());
             }     
         });
@@ -66,10 +75,23 @@
         };
 
         $(document).ready(function () {
+            $('.ui.dropdown').dropdown();
+
             // Convert MVC Model to Knockout ViewModel
             ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.allStarships);
             ko.applyBindings(viewModel);
         });
 
+        $(".starship.name").on("keyup",
+            function() {
+                viewModel.costQuery('');
+            }
+        );
+    
+        $(".starship.cost").on("keyup",
+            function() {
+                viewModel.nameQuery('');
+            }
+        );
     </script>
 }
