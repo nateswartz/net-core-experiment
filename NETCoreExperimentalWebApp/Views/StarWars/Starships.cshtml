@@ -8,18 +8,32 @@
 }
 
 <h2 class="ui header">Starships</h2>
-<div class="ui form">
-    <label>Filter By Name</label>
-    <div class="ten wide field">
-        <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" placeholder="Name">
-    </div>
-    <label>Filter By Cost</label>
-    <div class="two fields">
-        <div class="five wide field">
-            <input id="starshipCostOperatorInput" class="filter starship cost input" data-bind="value: costOperator, valueUpdate: 'keyup'" placeholder="< or >">
-        </div>
-        <div class="five wide field">
-            <input id="starshipCostValueInput" class="filter starship cost input" data-bind="value: costValue, valueUpdate: 'keyup'" placeholder="value">
+<div class="ui grid">
+    <div class="eight wide column">
+        <div class="ui segment">
+            <div class="ui form">
+                <label>Filter By Name</label>
+                <div class="field">
+                    <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" placeholder="Name">
+                </div>
+                <div class="field">
+                    <div class="ui horizontal divider">
+                        Or
+                    </div>
+                </div>
+                <label>Filter By Cost</label>
+                <div class="field">
+                    <div class="ui input">
+                        <select class="ui dropdown"
+                                data-bind="options: costOperatorOptions,
+                            optionsText: 'Text',
+                            optionsValue: 'Value',
+                            value: selectedCostOperator">
+                        </select>
+                        <input id="starshipCostValueInput" class="filter starship cost input" data-bind="value: costValue, valueUpdate: 'keyup'" placeholder="value">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -50,17 +64,18 @@
             allStarships: ko.observableArray(),
             nameQuery: ko.observable(''),
             costValue: ko.observable(''),
-            costOperator: ko.observable('')
+            costOperatorOptions: ko.observableArray([{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }]),
+            selectedCostOperator: ko.observable('')
         };
 
         viewModel.filteredStarships = ko.computed(function () {
             console.log("name = " + viewModel.nameQuery());
-            console.log("cost = " + viewModel.costValue())
-            if (viewModel.nameQuery() != "") {
+            console.log("cost = " + viewModel.costValue());
+            if (viewModel.nameQuery() !== "") {
                 return filterByName(viewModel.nameQuery());
             } else {
                 console.log("Filter by cost");
-                return filterByCost(viewModel.costValue(), viewModel.costOperator());
+                return filterByCost(viewModel.costValue(), viewModel.selectedCostOperator());
             }     
         });
 
@@ -72,7 +87,7 @@
 
         function filterByCost(value, operator) {
             return viewModel.allStarships().filter(function (starship) {
-                if (operator === "<") {
+                if (operator === "lt") {
                     if (starship.Cost_In_Credits() === null) {
                         return false;
                     }
@@ -93,7 +108,7 @@
         $(".starship.name").on("keyup",
             function() {
                 viewModel.costValue('');
-                viewModel.costOperator('');
+                viewModel.selectedCostOperator('');
             }
         );
     
