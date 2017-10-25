@@ -8,19 +8,20 @@
 }
 
 <h2 class="ui header">Starships</h2>
-<div class="ui text">Filter By Name</div>
-<div class="ui input">
-    <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" autocomplete="off">
-</div>
-<div class="ui input">
-    <div class="ui label">Filter By Cost</div>
-    <select class="ui dropdown">
-        <option value="">Operator</option>
-        <option value="lt"><</option>
-        <option value="gt">></option>
-    </select>
+<div class="ui form">
+    <label>Filter By Name</label>
+    <div class="ten wide field">
+        <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" placeholder="Name">
     </div>
-    <input class="filter starship cost input" data-bind="value: costQuery, valueUpdate: 'keyup'" autocomplete="off">
+    <label>Filter By Cost</label>
+    <div class="two fields">
+        <div class="five wide field">
+            <input id="starshipCostOperatorInput" class="filter starship cost input" data-bind="value: costOperator, valueUpdate: 'keyup'" placeholder="< or >">
+        </div>
+        <div class="five wide field">
+            <input id="starshipCostValueInput" class="filter starship cost input" data-bind="value: costValue, valueUpdate: 'keyup'" placeholder="value">
+        </div>
+    </div>
 </div>
 <div class="ui divider"></div>
 
@@ -48,17 +49,18 @@
         viewModel = {
             allStarships: ko.observableArray(),
             nameQuery: ko.observable(''),
-            costQuery: ko.observable('')
+            costValue: ko.observable(''),
+            costOperator: ko.observable('')
         };
 
         viewModel.filteredStarships = ko.computed(function () {
             console.log("name = " + viewModel.nameQuery());
-            console.log("cost = " + viewModel.costQuery())
+            console.log("cost = " + viewModel.costValue())
             if (viewModel.nameQuery() != "") {
                 return filterByName(viewModel.nameQuery());
             } else {
                 console.log("Filter by cost");
-                return filterByCost(viewModel.costQuery());
+                return filterByCost(viewModel.costValue(), viewModel.costOperator());
             }     
         });
 
@@ -68,9 +70,15 @@
             });
         };
 
-        function filterByCost(query) {
+        function filterByCost(value, operator) {
             return viewModel.allStarships().filter(function (starship) {
-                return starship.Cost_In_Credits() > query;
+                if (operator === "<") {
+                    if (starship.Cost_In_Credits() === null) {
+                        return false;
+                    }
+                    return starship.Cost_In_Credits() < value;
+                }
+                return starship.Cost_In_Credits() > value;
             });
         };
 
@@ -84,7 +92,8 @@
 
         $(".starship.name").on("keyup",
             function() {
-                viewModel.costQuery('');
+                viewModel.costValue('');
+                viewModel.costOperator('');
             }
         );
     
