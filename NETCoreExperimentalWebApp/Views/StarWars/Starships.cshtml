@@ -60,49 +60,60 @@
 @section Scripts {
     <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipViewModel.js")'></script>
     <script>
-        viewModel = {
-            allStarships: ko.observableArray(),
-            nameQuery: ko.observable(''),
-            costValue: ko.observable(''),
-            costOperatorOptions: ko.observableArray([{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }]),
-            selectedCostOperator: ko.observable('')
-        };
+        var viewModel = (function() {
+            allStarships = ko.observableArray();
+            nameQuery = ko.observable('');
+            costValue = ko.observable('');
+            costOperatorOptions = ko.observableArray([{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }]);
+            selectedCostOperator = ko.observable('');
 
-        viewModel.filteredStarships = ko.computed(function () {
-            console.log("name = " + viewModel.nameQuery());
-            console.log("cost = " + viewModel.costValue());
-            if (viewModel.nameQuery() !== "") {
-                return filterByName(viewModel.nameQuery());
-            } else {
-                console.log("Filter by cost");
-                return filterByCost(viewModel.costValue(), viewModel.selectedCostOperator());
-            }     
-        });
+            filterByName = function(query) {
+                return allStarships().filter(function (starship) {
+                    return starship.Name().toLowerCase().indexOf(query.toLowerCase()) >= 0;
+                });
+            };
 
-        function filterByName(query) {
-            return viewModel.allStarships().filter(function (starship) {
-                return starship.Name().toLowerCase().indexOf(query.toLowerCase()) >= 0;
-            });
-        };
-
-        function filterByCost(value, operator) {
-            return viewModel.allStarships().filter(function (starship) {
-                if (operator === "lt") {
-                    if (starship.Cost_In_Credits() === null) {
-                        return false;
+            filterByCost = function(value, operator) {
+                return allStarships().filter(function (starship) {
+                    if (operator === "lt") {
+                        if (starship.Cost_In_Credits() === null) {
+                            return false;
+                        }
+                        return starship.Cost_In_Credits() < value;
                     }
-                    return starship.Cost_In_Credits() < value;
-                }
-                return starship.Cost_In_Credits() > value;
+                    return starship.Cost_In_Credits() > value;
+                });
+            };
+
+            filteredStarships = ko.computed(function () {
+                console.log("name = " + nameQuery());
+                console.log("cost = " + costValue());
+                if (nameQuery() !== "") {
+                    return filterByName(nameQuery());
+                    return "test";
+                } else {
+                    console.log("Filter by cost");
+                    return filterByCost(costValue(), selectedCostOperator());
+                    return "test";
+                }     
             });
-        };
+
+            return {
+                allStarships: allStarships,
+                filteredStarships: filteredStarships,
+                nameQuery: nameQuery,
+                costValue: costValue,
+                costOperatorOptions: costOperatorOptions,
+                selectedCostOperator: selectedCostOperator
+            };
+        })();
 
         $(document).ready(function () {
+            ko.applyBindings(viewModel);
             $('.ui.dropdown').dropdown();
 
             // Convert MVC Model to Knockout ViewModel
             ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.allStarships);
-            ko.applyBindings(viewModel);
         });
 
         $(".starship.name").on("keyup",
