@@ -9,6 +9,9 @@
     self.MGLT = ko.observable(data.MGLT);
 
     self.FormattedCost = ko.computed(function () {
-        return self.Cost().toLocaleString({ useGrouping: true });
+        if (self.Cost() !== null) {
+            return self.Cost().toLocaleString({ useGrouping: true });
+        }
+        return null;
     }, self);
 };

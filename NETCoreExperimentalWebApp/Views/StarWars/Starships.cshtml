@@ -47,12 +47,12 @@
         <div class="content">
             <div class="meta" data-bind="text: Model"></div>
             <div class="meta" data-bind="text: Manufacturer"></div>
-            <div class="meta" data-bind="text: FormattedCost() + ' credits'"></div>
+            <div class="meta" data-bind="text: FormattedCost() + ' credits', visible: FormattedCost() !== null"></div>
         </div>
         <div class="content">
-            <div class="description" data-bind="text: Length() + ' meters'"></div>
-            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating()"></div>
-            <div class="description" data-bind="text: 'MGLT: ' + MGLT()"></div>
+            <div class="description" data-bind="text: Length() + ' meters', visible: Length() !== null"></div>
+            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating(), visible: HyperdriveRating() !== null"></div>
+            <div class="description" data-bind="text: 'MGLT: ' + MGLT(), visible: MGLT() !== null"></div>
         </div>
     </div>
 </div>
@@ -67,6 +67,18 @@
             self.costValue = ko.observable('');
             self.costOperatorOptions = [{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }];
             self.selectedCostOperator = ko.observable('');
+
+            self.nameQuery.subscribe(function () {
+                if (self.nameQuery() != "") {
+                    self.costValue('');
+                }
+            });
+
+            self.costValue.subscribe(function () {
+                if (self.costValue() != "") {
+                    self.nameQuery('');
+                }
+            });
 
             self.filterByName = function(query) {
                 return self.allStarships().filter(function (starship) {
@@ -87,10 +99,10 @@
             };
 
             self.filteredStarships = ko.computed(function () {
-                if (self.nameQuery() !== "") {
-                    return self.filterByName(nameQuery());
-                } else {
+                if (self.costValue() !== "") {
                     return self.filterByCost(self.costValue(), self.selectedCostOperator());
+                } else {
+                    return self.filterByName(nameQuery());
                 }     
             });
 
@@ -118,17 +130,5 @@
             ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), map, viewModel.allStarships);
         });
 
-        $(".starship.name").on("keyup",
-            function() {
-                viewModel.costValue('');
-                viewModel.selectedCostOperator('');
-            }
-        );
-    
-        $(".starship.cost").on("keyup",
-            function() {
-                viewModel.nameQuery('');
-            }
-        );
     </script>
 }
