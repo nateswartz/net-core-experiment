@@ -51,14 +51,14 @@
         </div>
         <div class="content">
             <div class="description" data-bind="text: Length() + ' meters'"></div>
-            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + Hyperdrive_Rating()"></div>
+            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating()"></div>
             <div class="description" data-bind="text: 'MGLT: ' + MGLT()"></div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipModel.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipViewModel.js")'></script>
     <script>
         var viewModel = (function () {
             var self = this;
@@ -77,12 +77,12 @@
             self.filterByCost = function(value, operator) {
                 return self.allStarships().filter(function (starship) {
                     if (operator === "lt") {
-                        if (starship.Cost_In_Credits() === null) {
+                        if (starship.Cost() === null) {
                             return false;
                         }
-                        return starship.Cost_In_Credits() < value;
+                        return starship.Cost() < value;
                     }
-                    return starship.Cost_In_Credits() > value;
+                    return starship.Cost() > value;
                 });
             };
 
@@ -108,8 +108,14 @@
             ko.applyBindings(viewModel);
             $('.ui.dropdown').dropdown();
 
+            var map = {
+                create: function (options) {
+                    return new StarshipViewModel(options.data);
+                }
+            }
+
             // Convert MVC Model to Knockout ViewModel
-            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), StarshipModel.map, viewModel.allStarships);
+            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), map, viewModel.allStarships);
         });
 
         $(".starship.name").on("keyup",
