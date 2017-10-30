@@ -47,7 +47,7 @@
         <div class="content">
             <div class="meta" data-bind="text: Model"></div>
             <div class="meta" data-bind="text: Manufacturer"></div>
-            <div class="meta" data-bind="text: Cost_In_Credits() + ' credits'"></div>
+            <div class="meta" data-bind="text: FormattedCost() + ' credits'"></div>
         </div>
         <div class="content">
             <div class="description" data-bind="text: Length() + ' meters'"></div>
@@ -58,23 +58,24 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipViewModel.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipModel.js")'></script>
     <script>
-        var viewModel = (function() {
-            allStarships = ko.observableArray();
-            nameQuery = ko.observable('');
-            costValue = ko.observable('');
-            costOperatorOptions = ko.observableArray([{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }]);
-            selectedCostOperator = ko.observable('');
+        var viewModel = (function () {
+            var self = this;
+            self.allStarships = ko.observableArray();
+            self.nameQuery = ko.observable('');
+            self.costValue = ko.observable('');
+            self.costOperatorOptions = [{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }];
+            self.selectedCostOperator = ko.observable('');
 
-            filterByName = function(query) {
-                return allStarships().filter(function (starship) {
+            self.filterByName = function(query) {
+                return self.allStarships().filter(function (starship) {
                     return starship.Name().toLowerCase().indexOf(query.toLowerCase()) >= 0;
                 });
             };
 
-            filterByCost = function(value, operator) {
-                return allStarships().filter(function (starship) {
+            self.filterByCost = function(value, operator) {
+                return self.allStarships().filter(function (starship) {
                     if (operator === "lt") {
                         if (starship.Cost_In_Credits() === null) {
                             return false;
@@ -85,26 +86,21 @@
                 });
             };
 
-            filteredStarships = ko.computed(function () {
-                console.log("name = " + nameQuery());
-                console.log("cost = " + costValue());
-                if (nameQuery() !== "") {
-                    return filterByName(nameQuery());
-                    return "test";
+            self.filteredStarships = ko.computed(function () {
+                if (self.nameQuery() !== "") {
+                    return self.filterByName(nameQuery());
                 } else {
-                    console.log("Filter by cost");
-                    return filterByCost(costValue(), selectedCostOperator());
-                    return "test";
+                    return self.filterByCost(self.costValue(), self.selectedCostOperator());
                 }     
             });
 
             return {
-                allStarships: allStarships,
-                filteredStarships: filteredStarships,
-                nameQuery: nameQuery,
-                costValue: costValue,
-                costOperatorOptions: costOperatorOptions,
-                selectedCostOperator: selectedCostOperator
+                allStarships: self.allStarships,
+                filteredStarships: self.filteredStarships,
+                nameQuery: self.nameQuery,
+                costValue: self.costValue,
+                costOperatorOptions: self.costOperatorOptions,
+                selectedCostOperator: self.selectedCostOperator
             };
         })();
 
@@ -113,7 +109,7 @@
             $('.ui.dropdown').dropdown();
 
             // Convert MVC Model to Knockout ViewModel
-            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.allStarships);
+            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), StarshipModel.map, viewModel.allStarships);
         });
 
         $(".starship.name").on("keyup",
