@@ -1,0 +1,14 @@
+﻿@model NETCoreExperimentalWebApp.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="ui header">Are you sure you want to delete @Model.UserName?</h2>
+<div>
+    <form class="ui form" asp-action="Delete">
+        <input type="submit" value="Delete" class="ui button" />
+        <a class="ui button" asp-action="Index">Back to List</a>
+    </form>
+</div>
