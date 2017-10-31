@@ -8,127 +8,157 @@
 }
 
 <h2 class="ui header">Starships</h2>
-<div class="ui grid">
-    <div class="eight wide column">
-        <div class="ui segment">
-            <div class="ui form">
-                <label>Filter By Name</label>
-                <div class="field">
-                    <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" placeholder="Name">
-                </div>
-                <div class="field">
-                    <div class="ui horizontal divider">
-                        Or
+<div class="ui basic segment">
+    <div class="ui grid">
+        <div class="eight wide column">
+            <div class="ui segment">
+                <div class="ui form">
+                    <label>Filter By Name</label>
+                    <div class="field">
+                        <input class="filter starship name input" data-bind="value: nameQuery, valueUpdate: 'keyup'" placeholder="Name">
                     </div>
-                </div>
-                <label>Filter By Cost</label>
-                <div class="field">
-                    <div class="ui input">
-                        <select class="ui dropdown"
-                                data-bind="options: costOperatorOptions,
+                    <div class="field">
+                        <div class="ui horizontal divider">
+                            Or
+                        </div>
+                    </div>
+                    <label>Filter By Manufacturer</label>
+                    <div class="field">
+                        <input class="filter starship manufacturer input" data-bind="value: manufacturerQuery, valueUpdate: 'keyup'" placeholder="Manufacturer">
+                    </div>
+                    <div class="field">
+                        <div class="ui horizontal divider">
+                            Or
+                        </div>
+                    </div>
+                    <label>Filter By Cost</label>
+                    <div class="field">
+                        <div class="ui input">
+                            <select class="ui dropdown"
+                                    data-bind="options: costOperatorOptions,
                             optionsText: 'Text',
                             optionsValue: 'Value',
-                            value: selectedCostOperator">
-                        </select>
-                        <input id="starshipCostValueInput" class="filter starship cost input" data-bind="value: costValue, valueUpdate: 'keyup'" placeholder="value">
+                            value: selectedCostOperator"></select>
+                            <input id="starshipCostValueInput" class="filter starship cost input" data-bind="value: costValue, valueUpdate: 'keyup'" placeholder="value">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="ui divider"></div>
 </div>
-<div class="ui divider"></div>
-
-<div data-bind="foreach: filteredStarships" id="gridItems" class="ui link cards column">
-    <div class="ui card">
-        <div class="content">
-            <div class="header" data-bind="text: Name"></div>
-        </div>
-        <div class="content">
-            <div class="meta" data-bind="text: Model"></div>
-            <div class="meta" data-bind="text: Manufacturer"></div>
-            <div class="meta" data-bind="text: FormattedCost() + ' credits', visible: FormattedCost() !== null"></div>
-        </div>
-        <div class="content">
-            <div class="description" data-bind="text: Length() + ' meters', visible: Length() !== null"></div>
-            <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating(), visible: HyperdriveRating() !== null"></div>
-            <div class="description" data-bind="text: 'MGLT: ' + MGLT(), visible: MGLT() !== null"></div>
+<div class="ui basic segment">
+    <div data-bind="foreach: filteredStarships" id="gridItems" class="ui link cards column">
+        <div class="ui card">
+            <div class="content">
+                <div class="header" data-bind="text: Name"></div>
+            </div>
+            <div class="content">
+                <div class="meta" data-bind="text: Model"></div>
+                <div class="meta" data-bind="text: Manufacturer"></div>
+                <div class="meta" data-bind="text: FormattedCost() + ' credits', visible: FormattedCost() !== null"></div>
+            </div>
+            <div class="content">
+                <div class="description" data-bind="text: Length() + ' meters', visible: Length() !== null"></div>
+                <div class="description" data-bind="text: 'Hyperdrive Rating: ' + HyperdriveRating(), visible: HyperdriveRating() !== null"></div>
+                <div class="description" data-bind="text: 'MGLT: ' + MGLT(), visible: MGLT() !== null"></div>
+            </div>
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script type="text/javascript" src='@Url.Content("~/js/KOModels/StarshipViewModel.js")'></script>
     <script>
-        var viewModel = (function () {
-            var self = this;
-            self.allStarships = ko.observableArray();
-            self.nameQuery = ko.observable('');
-            self.costValue = ko.observable('');
-            self.costOperatorOptions = [{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }];
-            self.selectedCostOperator = ko.observable('');
+    var viewModel = (function () {
+        var self = this;
+        self.allStarships = ko.observableArray();
+        self.nameQuery = ko.observable('');
+        self.manufacturerQuery = ko.observable('');
+        self.costValue = ko.observable('');
+        self.costOperatorOptions = [{ Text: ">", Value: "gt" }, { Text: "<", Value: "lt" }];
+        self.selectedCostOperator = ko.observable('');
 
-            self.nameQuery.subscribe(function () {
-                if (self.nameQuery() != "") {
-                    self.costValue('');
-                }
-            });
-
-            self.costValue.subscribe(function () {
-                if (self.costValue() != "") {
-                    self.nameQuery('');
-                }
-            });
-
-            self.filterByName = function(query) {
-                return self.allStarships().filter(function (starship) {
-                    return starship.Name().toLowerCase().indexOf(query.toLowerCase()) >= 0;
-                });
-            };
-
-            self.filterByCost = function(value, operator) {
-                return self.allStarships().filter(function (starship) {
-                    if (operator === "lt") {
-                        if (starship.Cost() === null) {
-                            return false;
-                        }
-                        return starship.Cost() < value;
-                    }
-                    return starship.Cost() > value;
-                });
-            };
-
-            self.filteredStarships = ko.computed(function () {
-                if (self.costValue() !== "") {
-                    return self.filterByCost(self.costValue(), self.selectedCostOperator());
-                } else {
-                    return self.filterByName(nameQuery());
-                }     
-            });
-
-            return {
-                allStarships: self.allStarships,
-                filteredStarships: self.filteredStarships,
-                nameQuery: self.nameQuery,
-                costValue: self.costValue,
-                costOperatorOptions: self.costOperatorOptions,
-                selectedCostOperator: self.selectedCostOperator
-            };
-        })();
-
-        $(document).ready(function () {
-            ko.applyBindings(viewModel);
-            $('.ui.dropdown').dropdown();
-
-            var map = {
-                create: function (options) {
-                    return new StarshipViewModel(options.data);
-                }
+        self.nameQuery.subscribe(function () {
+            if (self.nameQuery() != "") {
+                self.costValue('');
+                self.manufacturerQuery('');
             }
-
-            // Convert MVC Model to Knockout ViewModel
-            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), map, viewModel.allStarships);
         });
+
+        self.costValue.subscribe(function () {
+            if (self.costValue() != "") {
+                self.nameQuery('');
+                self.manufacturerQuery('');
+            }
+        });
+
+        self.manufacturerQuery.subscribe(function () {
+            if (self.manufacturerQuery() != "") {
+                self.costValue('');
+                self.nameQuery('');
+            }
+        });
+
+        self.filterByName = function(query) {
+            return self.allStarships().filter(function (starship) {
+                return starship.Name().toLowerCase().indexOf(query.toLowerCase()) >= 0;
+            });
+        };
+
+        self.filterByManufacturer = function (query) {
+            return self.allStarships().filter(function (starship) {
+                return starship.Manufacturer().toLowerCase().indexOf(query.toLowerCase()) >= 0;
+            });
+        }
+
+        self.filterByCost = function(value, operator) {
+            return self.allStarships().filter(function (starship) {
+                if (operator === "lt") {
+                    if (starship.Cost() === null) {
+                        return false;
+                    }
+                    return starship.Cost() < value;
+                }
+                return starship.Cost() > value;
+            });
+        };
+
+        self.filteredStarships = ko.computed(function () {
+            if (self.costValue() !== "") {
+                return self.filterByCost(self.costValue(), self.selectedCostOperator());
+            }
+            else if (self.manufacturerQuery() != "") {
+                return self.filterByManufacturer(manufacturerQuery());
+            }
+            else {
+                return self.filterByName(nameQuery());
+            }
+        });
+
+        return {
+            allStarships: self.allStarships,
+            filteredStarships: self.filteredStarships,
+            nameQuery: self.nameQuery,
+            costValue: self.costValue,
+            costOperatorOptions: self.costOperatorOptions,
+            selectedCostOperator: self.selectedCostOperator
+        };
+    })();
+
+    $(document).ready(function () {
+        ko.applyBindings(viewModel);
+        $('.ui.dropdown').dropdown();
+
+        var map = {
+            create: function (options) {
+                return new StarshipViewModel(options.data);
+            }
+        }
+
+        // Convert MVC Model to Knockout ViewModel
+        ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), map, viewModel.allStarships);
+    });
 
     </script>
 }
