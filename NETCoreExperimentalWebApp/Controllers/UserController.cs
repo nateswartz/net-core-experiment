@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using NETCoreExperimentalWebApp.Models;
+using NETCoreExperimentalWebApp.Models.AccountViewModels;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
@@ -26,9 +24,10 @@ namespace NETCoreExperimentalWebApp.Controllers
 
         public ActionResult ResetPassword(string id)
         {
-            return View(_userManager.Users
+            var user = _userManager.Users
                             .Where(u => u.Id == id)
-                            .FirstOrDefault());
+                            .FirstOrDefault();
+            return View(user);
         }
 
         [HttpPost]
@@ -43,7 +42,7 @@ namespace NETCoreExperimentalWebApp.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            // TODO: include error message
+            AddErrors(result);
             return View(user);
         }
 
@@ -61,15 +60,31 @@ namespace NETCoreExperimentalWebApp.Controllers
         {
             try
             {
-                _userManager.DeleteAsync(_userManager.Users
+                var result = _userManager.DeleteAsync(_userManager.Users
                                             .Where(u => u.Id == id)
-                                            .FirstOrDefault());
-                return RedirectToAction(nameof(Index));
+                                            .FirstOrDefault()).Result;
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(id);
             }
             catch
             {
-                return View();
+                return View(id);
             }
         }
+
+        #region Helpers
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        #endregion
     }
 }

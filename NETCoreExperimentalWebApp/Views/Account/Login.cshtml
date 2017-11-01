@@ -6,6 +6,7 @@
 
 <h2 class="ui header">@ViewData["Title"]</h2>
 <div class="ui left floated raised very padded text container segment">
+    <div>@Html.ValidationSummary()</div>
     <form class="ui form" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
         <div class="ui error message"></div>
         <div class="field">
@@ -43,10 +44,6 @@
                         Password: 'empty'
                     }
                 });
-            var jsonModel = @Html.Raw(JsonConvert.SerializeObject(Model));
-            if (jsonModel !== null) {
-                $('.form .error.message').html('Login failed').show();
-            };
         });
     </script>
 }

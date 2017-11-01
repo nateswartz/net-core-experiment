@@ -7,6 +7,7 @@
 <h2 class="ui header">@ViewData["Title"]</h2>
 
 <div class="ui left floated raised very padded text container segment">
+    <div>@Html.ValidationSummary()</div>
     <form class="ui form" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
         <div class="ui error message"></div>
         <div class="field">
@@ -43,16 +44,12 @@
                         rules: [
                             {
                                 type: 'match[Password]',
-                                prompt: 'Please put the same value in both fields'
+                                prompt: 'Password and Confirm Password values must match'
                             }
                         ]
                     }
                 }
             });
-            var jsonModel = @Html.Raw(JsonConvert.SerializeObject(Model));
-            if (jsonModel !== null) {
-                $('.form .error.message').html('Registration failed: Password must be at least 6 characters long').show();
-            };
         });
     </script>
 }
