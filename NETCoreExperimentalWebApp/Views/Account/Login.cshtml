@@ -65,7 +65,13 @@
                     url          : "Login",
                     onSuccess    : function(response) {
                         //TODO: Find a better way to do this
-                        window.location.replace("/");
+                        var destination = window.location.href.split("?ReturnUrl=")[1];
+                        if (destination !== undefined) {
+                            window.location.replace(decodeURIComponent(destination));
+                        }
+                        else {
+                            window.location.replace("/");
+                        }
                     },
                     onFailure    : function(response) {
                         console.log(response);
