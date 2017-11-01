@@ -6,7 +6,6 @@
 
 <h2 class="ui header">@ViewData["Title"]</h2>
 <div class="ui left floated raised very padded text container segment">
-    <div>@Html.ValidationSummary()</div>
     <form class="ui form" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
         <div class="ui error message"></div>
         <div class="field">
@@ -40,8 +39,40 @@
             $('.ui.form')
                 .form({
                     fields: {
-                        Username: 'empty',
-                        Password: 'empty'
+                        username: {
+                            identifier: 'Username',
+                            rules : [
+                                {
+                                    type  : 'empty',
+                                    prompt: 'Please enter your username'
+                                }
+                            ]
+                        },
+                        password: {
+                            identifier: 'Password',
+                            rules : [
+                                {
+                                    type  : 'empty',
+                                    prompt: 'Please enter your password'
+                                }
+                            ]
+                        }
+                    }
+                })
+                .api({
+                    method       : 'POST',
+                    serializeForm: true,
+                    url          : "Login",
+                    onSuccess    : function(response) {
+                        //TODO: Find a better way to do this
+                        window.location.replace("/");
+                    },
+                    onFailure    : function(response) {
+                        console.log(response);
+                        $(this).removeClass('loading');
+                        $(this).form('add errors',['Login Failed']);
+                        $(this).form('clear');
+                        $(this).find('.ui.error.message').show();
                     }
                 });
         });

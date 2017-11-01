@@ -43,17 +43,17 @@ namespace NETCoreExperimentalWebApp.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToLocal(returnUrl);
+                    return Ok(returnUrl);
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return BadRequest();
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return BadRequest();
         }
 
         [HttpGet]

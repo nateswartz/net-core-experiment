@@ -7,7 +7,8 @@
     "jquery-validation-unobtrusive": "3.2.6",
     "semantic": "Semantic-UI#2.2.13",
     "knockout": "v3.4.2",
-    "knockout-mapping": "2.4.1"
+    "knockout-mapping": "2.4.1",
+    "jquery-serialize-object": "2.5.0"
   },
   "resolutions": {
     "jquery": "3.2.1",
