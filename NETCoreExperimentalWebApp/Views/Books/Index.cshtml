@@ -171,15 +171,15 @@
             <input id="inputEditBookId" type="hidden" />
             <div class="field">
                 <label>Title</label>
-                <input id="inputEditBookTitle" type="text" name="Title">
+                <input id="inputEditBookTitle" type="text" name="Title" data-bind="value: currentBook().Title">
             </div>
             <div class="field">
                 <label>Author</label>
-                <input id="inputEditBookAuthor" type="text" name="Author">
+                <input id="inputEditBookAuthor" type="text" name="Author" data-bind="value: currentBook().Author">
             </div>
             <div class="field">
                 <label>Image</label>
-                <input id="inputEditBookImage" type="text" name="Image">
+                <input id="inputEditBookImage" type="text" name="Image" data-bind="value: currentBook().Image">
             </div>
             <div class="field" id="fieldEditBookType">
                 <label>Type</label>
@@ -216,14 +216,8 @@
         function onListEditClick() {
             resetEditBookModal();
             var myId = $(this).attr('data-id');
-            var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function(book) {
-                return book.id().toString() === myId;
-            });
-            $("#modalEditBook #inputEditBookId").val(bookToEdit.id());
-            $("#modalEditBook #inputEditBookTitle").val(bookToEdit.Title());
-            $("#modalEditBook #inputEditBookAuthor").val(bookToEdit.Author());
-            $("#modalEditBook #inputEditBookImage").val(bookToEdit.Image());
-            $('#modalEditBook .ui.dropdown').dropdown('set selected', bookToEdit.Type().toString());
+            viewModel.setCurrentBook(myId);
+            $('#modalEditBook .ui.dropdown').dropdown('set selected', viewModel.currentBook().Type().toString());
             $("#modalEditBook").modal('show');
         }
 
@@ -245,7 +239,15 @@
         }
 
         viewModel = {
-            books: ko.observableArray()
+            books: ko.observableArray(),
+            currentBook: ko.observable(''),
+
+            setCurrentBook: function (id) {
+                viewModel.currentBook(ko.utils.arrayFirst(viewModel.books(), function (book) {
+                    return book.id().toString() === id;
+                }));
+
+            }
         };
 
         $(document).ready(function() {
@@ -345,23 +347,13 @@
                     }
                 },
                 onSuccess: function () {
-                    var oldBook = new BookViewModel(
-                        $("#inputEditBookId").val(),
-                        $("#inputEditBookAuthor").val(),
-                        $("#inputEditBookTitle").val(),
-                        $("#inputEditBookImage").val(),
-                        $("#fieldEditBookType .active").text());
                     var editBook = $.ajax({
                         type: "POST",
-                        url: "/Books/Edit/" + oldBook.id(),
-                        data: JSON.stringify(ko.toJS(oldBook)),
+                        url: "/Books/Edit/" + viewModel.currentBook().id(),
+                        data: JSON.stringify(ko.toJS(viewModel.currentBook())),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function() {
-                            var bookToEdit = ko.utils.arrayFirst(viewModel.books(), function (book) {
-                                return book.id().toString() === oldBook.id();
-                            });
-                            viewModel.books.replace(bookToEdit, oldBook);
                             // When we add a new book we need to add a click handler to the delete button
                             addButtonBindings();
                         }
