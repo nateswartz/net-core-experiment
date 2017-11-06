@@ -118,19 +118,23 @@
         <form id="frmAddBook" class="ui form" onsubmit="return false">
             <div class="field">
                 <label>Title</label>
-                <input id="inputAddBookTitle" type="text" name="Title">
+                <input id="inputAddBookTitle" type="text" name="Title" data-bind="value: newBook().Title">
             </div>
             <div class="field">
                 <label>Author</label>
-                <input id="inputAddBookAuthor" type="text" name="Author">
+                <input id="inputAddBookAuthor" type="text" name="Author" data-bind="value: newBook().Author">
             </div>
             <div class="field">
                 <label>Image</label>
-                <input id="inputAddBookImage" type="text" name="Image">
+                <input id="inputAddBookImage" type="text" name="Image" data-bind="value: newBook().Image">
             </div>
             <div class="field" id="fieldAddBookType">
                 <label>Type</label>
-                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()"></select>
+                <select class="ui dropdown" name="dropdown"
+                        data-bind="options: bookTypeOptions,
+                            optionsText: 'Text',
+                            optionsValue: 'Value',
+                            value: newBook().Type"></select>
             </div>
             <div class="ui divider"></div>
             <div class="ui buttons">
@@ -143,13 +147,9 @@
 </div>
 
 <div id="modalDeleteBook" class="ui basic small modal">
-    <div class="header">
+    <div class="header" data-bind="text: 'Are you sure you want to delete ' + selectedBook().Title() + '?'">
         Are you sure you want to delete the book?
     </div>
-    <input class="id" type="hidden" />
-    <input class="title" type="hidden" />
-    <input class="author" type="hidden" />
-    <input class="type" type="hidden" />
     <div class="actions">
         <div id="btnCancelDeleteBook" class="ui red basic cancel inverted button">
             <i class="remove icon"></i>
@@ -171,19 +171,24 @@
             <input id="inputEditBookId" type="hidden" />
             <div class="field">
                 <label>Title</label>
-                <input id="inputEditBookTitle" type="text" name="Title" data-bind="value: currentBook().Title">
+                <input id="inputEditBookTitle" type="text" name="Title" data-bind="value: selectedBook().Title">
             </div>
             <div class="field">
                 <label>Author</label>
-                <input id="inputEditBookAuthor" type="text" name="Author" data-bind="value: currentBook().Author">
+                <input id="inputEditBookAuthor" type="text" name="Author" data-bind="value: selectedBook().Author">
             </div>
             <div class="field">
                 <label>Image</label>
-                <input id="inputEditBookImage" type="text" name="Image" data-bind="value: currentBook().Image">
+                <input id="inputEditBookImage" type="text" name="Image" data-bind="value: selectedBook().Image">
             </div>
             <div class="field" id="fieldEditBookType">
                 <label>Type</label>
-                <select class="ui dropdown" name="dropdown" asp-items="Html.GetEnumSelectList<BookType>()"></select>
+                <select class="ui dropdown" name="dropdown"
+                        data-bind="options: bookTypeOptions,
+                            optionsText: 'Text',
+                            optionsValue: 'Value',
+                            optionsCaption: selectedBook().Type(),
+                            value: selectedBook().Type"></select>
             </div>
             <div class="ui divider"></div>
             <div class="ui buttons">
@@ -207,46 +212,43 @@
             $('#listItems').show();
         };
 
-        function onListDeleteClick() {
-            $("#modalDeleteBook .header").text("Are you sure you want to delete " + $(this).attr('data-title') + "?");
-            $("#modalDeleteBook .id").val($(this).attr('data-id'));
-            $("#modalDeleteBook").modal('show');
-        };
+        var viewModel = (function () {
+            var self = this;
+            self.books = ko.observableArray();
+            self.selectedBook = ko.observable(new BookViewModel());
+            self.newBook = ko.observable(new BookViewModel());
+            self.bookTypeOptions = [{ Text: "Board", Value: 0 }, { Text: "Electronic", Value: "1" }, { Text: "Standard", Value: 2 }];
 
-        function onListEditClick() {
-            resetEditBookModal();
-            var myId = $(this).attr('data-id');
-            viewModel.setCurrentBook(myId);
-            $('#modalEditBook .ui.dropdown').dropdown('set selected', viewModel.currentBook().Type().toString());
-            $("#modalEditBook").modal('show');
-        }
+            self.selectBook = function (id) {
+                var book = ko.utils.arrayFirst(self.books(), function (book) {
+                    return book.id().toString() === id;
+                });
+                var temp = ko.toJS(book);
+                self.selectedBook(ko.mapping.fromJS(temp));
+            };
 
-        function resetAddBookModal() {
-            $("#modalAddBook .ui.form").form('clear');
-            $("#modalAddBook .error").removeClass("error");
-            $('#modalAddBook .form .message').hide();
-        };
+            return {
+                books: self.books,
+                selectedBook: self.selectedBook,
+                newBook: self.newBook,
+                bookTypeOptions: self.bookTypeOptions,
+                selectBook: self.selectBook,
+            };
+        })();
 
-        function resetEditBookModal() {
-            $("#modalEditBook .ui.form").form('clear');
-            $("#modalEditBook .error").removeClass("error");
-            $('#modalEditBook .form .message').hide();
-        };
-
-        function addButtonBindings() {
-            $(".delete.book").on("click", onListDeleteClick);
-            $(".edit.book").on("click", onListEditClick);
-        }
 
         viewModel = {
             books: ko.observableArray(),
-            currentBook: ko.observable(''),
+            selectedBook: ko.observable(new BookViewModel()),
+            newBook: ko.observable(new BookViewModel()),
+            bookTypeOptions: [{ Text: "Board", Value: 0 }, { Text: "Electronic", Value: "1" }, { Text: "Standard", Value:2 }],
 
-            setCurrentBook: function (id) {
-                viewModel.currentBook(ko.utils.arrayFirst(viewModel.books(), function (book) {
+            selectBook: function (id) {
+                var book = ko.utils.arrayFirst(viewModel.books(), function (book) {
                     return book.id().toString() === id;
-                }));
-
+                });
+                var temp = ko.toJS(book);
+                viewModel.selectedBook(ko.mapping.fromJS(temp));
             }
         };
 
@@ -291,15 +293,10 @@
                     }
                 },
                 onSuccess: function () {
-                    var bookToAdd = new BookViewModel(0,
-                        $("#inputAddBookAuthor").val(),
-                        $("#inputAddBookTitle").val(),
-                        $("#inputAddBookImage").val(),
-                        $("#fieldAddBookType .active").text());
                     $.ajax({
                         type: "POST",
                         url: "/Books/Create",
-                        data: JSON.stringify(ko.toJS(bookToAdd)),
+                        data: JSON.stringify(ko.toJS(viewModel.newBook())),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) {
@@ -310,7 +307,6 @@
                         }
                     });
                     $("#modalAddBook").modal('hide');
-                    resetAddBookModal();
                 }
             });
 
@@ -347,25 +343,53 @@
                     }
                 },
                 onSuccess: function () {
-                    var editBook = $.ajax({
+                    console.log(viewModel.selectedBook().Type());
+                    $.ajax({
                         type: "POST",
-                        url: "/Books/Edit/" + viewModel.currentBook().id(),
-                        data: JSON.stringify(ko.toJS(viewModel.currentBook())),
+                        url: "/Books/Edit/" + viewModel.selectedBook().id(),
+                        data: JSON.stringify(ko.toJS(viewModel.selectedBook())),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
-                        success: function() {
+                        success: function () {
+                            var bookToModify = ko.utils.arrayFirst(viewModel.books(), function (book) {
+                                return book.id() === viewModel.selectedBook().id();
+                            });
+                            console.log(bookToModify.Type());
+                            console.log(viewModel.selectedBook().Type());
+                            viewModel.books.replace(bookToModify, viewModel.selectedBook());
                             // When we add a new book we need to add a click handler to the delete button
                             addButtonBindings();
                         }
                     });
                     $("#modalEditBook").modal('hide');
-                    resetEditBookModal();
                 }
             });
 
             // Perform any event bindings on dynamic elements
             addButtonBindings();
         });
+
+        function onListDeleteClick() {
+            viewModel.selectBook($(this).attr('data-id'));
+            $("#modalDeleteBook").modal('show');
+        };
+
+        function onListEditClick() {
+            resetModal('#modalEditBook');
+            viewModel.selectBook($(this).attr('data-id'));
+            $("#modalEditBook").modal('show');
+        };
+
+        function resetModal(modalId) {
+            $(modalId + ' .ui.form').form('clear');
+            $(modalId + ' .error').removeClass("error");
+            $(modalId + ' .form .message').hide();
+        };
+
+        function addButtonBindings() {
+            $(".delete.book").on("click", onListDeleteClick);
+            $(".edit.book").on("click", onListEditClick);
+        };
 
         // Event bindings on static elements
         $("#btnDisplayGrid").on("click",
@@ -386,7 +410,7 @@
 
         $("#btnAddBook").on("click",
             function() {
-                resetAddBookModal();
+                resetModal('#modalAddBook');
                 $("#modalAddBook").modal('show');
             }
         );
@@ -394,7 +418,7 @@
         $("#btnCancelAddBook").on("click",
             function() {
                 $("#modalAddBook").modal('hide');
-                resetAddBookModal();
+                resetModal('#modalAddBook');
             }
         );
 
@@ -407,7 +431,7 @@
         $("#btnCancelEditBook").on("click",
             function() {
                 $("#modalEditBook").modal('hide');
-                resetEditBookModal();
+                resetModal('#modalEditBook');
             }
         );
 
@@ -421,10 +445,10 @@
             function() {
                 $.ajax({
                     type: "POST",
-                    url: "/Books/Delete/" + $("#modalDeleteBook .id").val(),
+                    url: "/Books/Delete/" + viewModel.selectedBook().id(),
                     success: function() {
                         viewModel.books.remove(function(book) {
-                            return book.id().toString() === $("#modalDeleteBook .id").val();
+                            return book.id() === viewModel.selectedBook().id();
                         });
                     }
                 });

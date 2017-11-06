@@ -1,8 +1,8 @@
-﻿function BookViewModel(id, author, title, image, type) {
+﻿function BookViewModel() {
     var self = this;
-    self.id = ko.observable(id);
-    self.Author = ko.observable(author);
-    self.Title = ko.observable(title);
-    self.Image = ko.observable(image);
-    self.Type = ko.observable(type);
+    self.id = ko.observable('');
+    self.Author = ko.observable('');
+    self.Title = ko.observable('');
+    self.Image = ko.observable('');
+    self.Type = ko.observable('');
 };
