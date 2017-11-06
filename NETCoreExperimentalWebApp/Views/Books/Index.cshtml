@@ -139,7 +139,7 @@
             <div class="ui divider"></div>
             <div class="ui buttons">
                 <button id="btnConfirmAddBook" class="ui primary button">Confirm</button>
-                <button id="btnCancelAddBook" class="ui button">Cancel</button>
+                <div id="btnCancelAddBook" class="ui button">Cancel</div>
             </div>
             <div class="ui error message"></div>
         </form>
@@ -183,17 +183,17 @@
             </div>
             <div class="field" id="fieldEditBookType">
                 <label>Type</label>
+                <div data-bind="text: selectedBook().Type"></div>
                 <select class="ui dropdown" name="dropdown"
                         data-bind="options: bookTypeOptions,
                             optionsText: 'Text',
                             optionsValue: 'Value',
-                            optionsCaption: selectedBook().Type(),
                             value: selectedBook().Type"></select>
             </div>
             <div class="ui divider"></div>
             <div class="ui buttons">
                 <button id="btnConfirmEditBook" class="ui primary button">Confirm</button>
-                <button id="btnCancelEditBook" class="ui button">Cancel</button>
+                <div id="btnCancelEditBook" class="ui button">Cancel</div>
             </div>
             <div class="ui error message"></div>
         </form>
@@ -217,7 +217,7 @@
             self.books = ko.observableArray();
             self.selectedBook = ko.observable(new BookViewModel());
             self.newBook = ko.observable(new BookViewModel());
-            self.bookTypeOptions = [{ Text: "Board", Value: 0 }, { Text: "Electronic", Value: "1" }, { Text: "Standard", Value: 2 }];
+            self.bookTypeOptions = [{ Text: "Board", Value: 0 }, { Text: "Electronic", Value: 1 }, { Text: "Standard", Value: 2 }];
 
             self.selectBook = function (id) {
                 var book = ko.utils.arrayFirst(self.books(), function (book) {
@@ -236,21 +236,6 @@
             };
         })();
 
-
-        viewModel = {
-            books: ko.observableArray(),
-            selectedBook: ko.observable(new BookViewModel()),
-            newBook: ko.observable(new BookViewModel()),
-            bookTypeOptions: [{ Text: "Board", Value: 0 }, { Text: "Electronic", Value: "1" }, { Text: "Standard", Value:2 }],
-
-            selectBook: function (id) {
-                var book = ko.utils.arrayFirst(viewModel.books(), function (book) {
-                    return book.id().toString() === id;
-                });
-                var temp = ko.toJS(book);
-                viewModel.selectedBook(ko.mapping.fromJS(temp));
-            }
-        };
 
         $(document).ready(function() {
             // Initialize dropdowns
@@ -343,7 +328,6 @@
                     }
                 },
                 onSuccess: function () {
-                    console.log(viewModel.selectedBook().Type());
                     $.ajax({
                         type: "POST",
                         url: "/Books/Edit/" + viewModel.selectedBook().id(),
@@ -354,8 +338,6 @@
                             var bookToModify = ko.utils.arrayFirst(viewModel.books(), function (book) {
                                 return book.id() === viewModel.selectedBook().id();
                             });
-                            console.log(bookToModify.Type());
-                            console.log(viewModel.selectedBook().Type());
                             viewModel.books.replace(bookToModify, viewModel.selectedBook());
                             // When we add a new book we need to add a click handler to the delete button
                             addButtonBindings();
@@ -376,12 +358,12 @@
 
         function onListEditClick() {
             resetModal('#modalEditBook');
+            viewModel.selectedBook().Type.valueHasMutated()
             viewModel.selectBook($(this).attr('data-id'));
             $("#modalEditBook").modal('show');
         };
 
         function resetModal(modalId) {
-            $(modalId + ' .ui.form').form('clear');
             $(modalId + ' .error').removeClass("error");
             $(modalId + ' .form .message').hide();
         };
