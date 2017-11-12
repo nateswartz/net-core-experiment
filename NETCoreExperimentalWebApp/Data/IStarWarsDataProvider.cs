@@ -1,5 +1,4 @@
-﻿using NETCoreExperimentalWebApp.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NETCoreExperimentalWebApp.Models.StarWarsModels;
 
 namespace NETCoreExperimentalWebApp.Data
@@ -9,6 +8,8 @@ namespace NETCoreExperimentalWebApp.Data
         IEnumerable<StarshipModel> GetStarships();
 
         PersonModel GetPerson(int personId);
+
+        IEnumerable<SpeciesModel> GetSpecies();
     }
 
 }

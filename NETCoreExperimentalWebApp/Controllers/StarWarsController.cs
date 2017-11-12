@@ -30,5 +30,12 @@ namespace NETCoreExperimentalWebApp.Controllers
             var starships = _provider.GetStarships();
             return View(starships);
         }
+
+        [HttpGet]
+        public IActionResult Species()
+        {
+            var species = _provider.GetSpecies();
+            return View(species);
+        }
     }
 }
