@@ -1,9 +1,23 @@
-﻿@{
+﻿@model List<NewsArticleModel>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="ui raised very padded text container segment">
-    <h2 class="ui header">This is the home page of my experimental app.</h2>
-    <p>I'm not sure what content it will contain.</p>
-    <p>But it will be very exciting I'm sure.</p>
+<div class="ui link cards">
+    @foreach (var article in Model)
+    {
+        <div class="ui card">
+            <a class="image" href="@Url.Content(article.Url)" target="_blank">
+                <img src="@Url.Content(article.UrlToImage)" />
+            </a>
+            <a class="content" href="@Url.Content(article.Url)" target="_blank">
+                <div class="header">@Html.DisplayFor( title => article.Title)</div>
+                <div class="meta">By: @Html.DisplayFor( author => article.Author)</div>
+            </a>
+            <a class="extra content" href="@Url.Content(article.Url)" target="_blank">
+                <div class="meta">@Html.DisplayFor(description => article.Description)</div>
+            </a>
+        </div>
+    }
 </div>

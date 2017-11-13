@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NETCoreExperimentalWebApp.Models;
+using NETCoreExperimentalWebApp.Data;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private INewsProvider _newsProvider;
+        public HomeController(INewsProvider newsProvider)
+        {
+            _newsProvider = newsProvider;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            var articles = _newsProvider.GetArticles();
+            return View(articles);
         }
 
         public IActionResult Error()
