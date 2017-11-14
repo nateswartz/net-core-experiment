@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NETCoreExperimentalWebApp.Models;
 using NETCoreExperimentalWebApp.Data;
+using System.Collections.Generic;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
@@ -19,10 +20,17 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetArticles([FromBody]int category)
+        public IActionResult GetArticles([FromBody]string source)
         {
-            var articles = _newsProvider.GetArticles((ArticleCategories)category);
+            var articles = _newsProvider.GetArticles(new List<string>() { source });
             return new ObjectResult(articles);
+        }
+
+        [HttpGet]
+        public IActionResult GetSources()
+        {
+            var sources = _newsProvider.GetSources();
+            return new ObjectResult(sources);
         }
 
         public IActionResult Error()

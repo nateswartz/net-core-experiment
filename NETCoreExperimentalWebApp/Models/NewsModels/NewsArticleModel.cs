@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NETCoreExperimentalWebApp.Models
+namespace NETCoreExperimentalWebApp.Models.NewsModels
 {
     public class NewsArticlesResponse
     {

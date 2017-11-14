@@ -5,12 +5,12 @@
 <h2 class="ui header">News Articles</h2>
 
 <div class="field">
-    <label>Category</label>
+    <label>Source</label>
     <select class="ui dropdown" name="dropdown"
-            data-bind="options: articleCategories,
-                            optionsText: 'Text',
-                            optionsValue: 'Value',
-                            value: selectedCategory"></select>
+            data-bind="options: articleSources,
+                            optionsText: 'Name',
+                            optionsValue: 'Id',
+                            value: selectedSource"></select>
 </div>
 
 <div class="ui divider"></div>
@@ -34,41 +34,58 @@
     <script type="text/javascript" src='@Url.Content("~/js/KOModels/ArticleViewModel.js")'></script>
     <script>
 
+
         var viewModel = (function () {
             var self = this;
             self.articles = ko.observableArray();
-            self.articleCategories = [{ Text: "Tech", Value: 0 }, { Text: "News", Value: 1 }];
-            self.selectedCategory = ko.observable('');
+            self.articleSources = ko.observableArray();
+            self.selectedSource = ko.observable('');
 
-            self.updateCategory = function () {
-                console.log(self.selectedCategory());
-                $.ajax({
-                    type: "POST",
-                    url: "/Home/GetArticles",
-                    data: JSON.stringify(ko.toJS(self.selectedCategory())),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(data);
-                        ko.mapping.fromJS(data, {}, viewModel.articles);
-                    }
-                });
+            self.updateSource = function () {
+                console.log(self.selectedSource());
+                if (self.selectedSource() !== undefined) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/GetArticles",
+                        data: JSON.stringify(ko.toJS(self.selectedSource())),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            console.log(data);
+                            ko.mapping.fromJS(data, {}, viewModel.articles);
+                        }
+                    });
+                }
             };
 
-            self.selectedCategory.subscribe(self.updateCategory);
+            self.selectedSource.subscribe(self.updateSource);
 
             return {
                 articles: self.articles,
-                articleCategories: self.articleCategories,
+                articleSources: self.articleSources,
+                selectedSource: self.selectedSource
             };
         })();
 
 
         $(document).ready(function () {
+
             // Initialize dropdowns
             $('.ui.dropdown').dropdown();
 
+            $.ajax({
+                type: "Get",
+                url: "/Home/GetSources",
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    ko.mapping.fromJS(data, {}, viewModel.articleSources);
+                    viewModel.selectedSource('ars-technica');
+                }
+            });
+
             ko.applyBindings(viewModel);
+
         });
     </script>
 }
