@@ -24,9 +24,18 @@ namespace NETCoreExperimentalWebApp.Data
             return response.articles[0];
         }
 
-        public IList<NewsArticleModel> GetArticles()
+        public IList<NewsArticleModel> GetArticles(ArticleCategories category)
         {
-            var result = _client.GetAsync("articles?sortBy=top&apiKey=5933e800d1bc401f88e92f56caff0aca&source=ars-technica").Result;
+            var source = "";
+            if (category == ArticleCategories.Tech)
+            {
+                source = "ars-technica";
+            }
+            else if (category == ArticleCategories.News)
+            {
+                source = "cnn";
+            }
+            var result = _client.GetAsync($"articles?sortBy=top&apiKey=5933e800d1bc401f88e92f56caff0aca&source={source}").Result;
             var data = result.Content.ReadAsStringAsync().Result;
             var response = JsonConvert.DeserializeObject<NewsArticlesResponse>(data);
             return response.articles;

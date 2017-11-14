@@ -15,8 +15,14 @@ namespace NETCoreExperimentalWebApp.Controllers
 
         public IActionResult Index()
         {
-            var articles = _newsProvider.GetArticles();
-            return View(articles);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult GetArticles([FromBody]int category)
+        {
+            var articles = _newsProvider.GetArticles((ArticleCategories)category);
+            return new ObjectResult(articles);
         }
 
         public IActionResult Error()

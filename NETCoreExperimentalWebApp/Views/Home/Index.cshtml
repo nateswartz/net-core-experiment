@@ -1,23 +1,74 @@
-﻿@model List<NewsArticleModel>
-
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="ui link cards">
-    @foreach (var article in Model)
-    {
-        <div class="ui card">
-            <a class="image" href="@Url.Content(article.Url)" target="_blank">
-                <img src="@Url.Content(article.UrlToImage)" />
-            </a>
-            <a class="content" href="@Url.Content(article.Url)" target="_blank">
-                <div class="header">@Html.DisplayFor( title => article.Title)</div>
-                <div class="meta">By: @Html.DisplayFor( author => article.Author)</div>
-            </a>
-            <a class="extra content" href="@Url.Content(article.Url)" target="_blank">
-                <div class="meta">@Html.DisplayFor(description => article.Description)</div>
-            </a>
-        </div>
-    }
+<h2 class="ui header">News Articles</h2>
+
+<div class="field">
+    <label>Category</label>
+    <select class="ui dropdown" name="dropdown"
+            data-bind="options: articleCategories,
+                            optionsText: 'Text',
+                            optionsValue: 'Value',
+                            value: selectedCategory"></select>
 </div>
+
+<div class="ui divider"></div>
+
+<div class="ui link cards" data-bind="foreach: articles">
+    <div class="ui card">
+        <a class="image" data-bind="attr: { href: Url }" target="_blank">
+            <img data-bind="attr: { src: UrlToImage }" />
+        </a>
+        <a class="content" data-bind="attr: { href: Url }" target="_blank">
+            <div class="header" data-bind="text: Title"></div>
+            <div class="meta" data-bind="text: Author"></div>
+        </a>
+        <a class="extra content" data-bind="attr: { href: Url }" target="_blank">
+            <div class="meta" data-bind="text: Description"></div>
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src='@Url.Content("~/js/KOModels/ArticleViewModel.js")'></script>
+    <script>
+
+        var viewModel = (function () {
+            var self = this;
+            self.articles = ko.observableArray();
+            self.articleCategories = [{ Text: "Tech", Value: 0 }, { Text: "News", Value: 1 }];
+            self.selectedCategory = ko.observable('');
+
+            self.updateCategory = function () {
+                console.log(self.selectedCategory());
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/GetArticles",
+                    data: JSON.stringify(ko.toJS(self.selectedCategory())),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        ko.mapping.fromJS(data, {}, viewModel.articles);
+                    }
+                });
+            };
+
+            self.selectedCategory.subscribe(self.updateCategory);
+
+            return {
+                articles: self.articles,
+                articleCategories: self.articleCategories,
+            };
+        })();
+
+
+        $(document).ready(function () {
+            // Initialize dropdowns
+            $('.ui.dropdown').dropdown();
+
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}

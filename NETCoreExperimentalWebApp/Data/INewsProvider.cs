@@ -6,6 +6,11 @@ namespace NETCoreExperimentalWebApp.Data
     public interface INewsProvider
     {
         NewsArticleModel GetArticle();
-        IList<NewsArticleModel> GetArticles();
+        IList<NewsArticleModel> GetArticles(ArticleCategories category);
+    }
+
+    public enum ArticleCategories
+    {
+        Tech, News
     }
 }
