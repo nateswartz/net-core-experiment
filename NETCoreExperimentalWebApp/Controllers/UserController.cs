@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using NETCoreExperimentalWebApp.Models;
-using NETCoreExperimentalWebApp.Models.AccountViewModels;
 
 namespace NETCoreExperimentalWebApp.Controllers
 {
@@ -17,7 +16,7 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         // GET: User
-        public ActionResult Index()
+        public ActionResult Users()
         {
             return View(_userManager.Users.ToList());
         }
@@ -40,7 +39,7 @@ namespace NETCoreExperimentalWebApp.Controllers
             var result = _userManager.ResetPasswordAsync(user, token, newPassword).Result;
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Users));
             }
             AddErrors(result);
             return View(user);
@@ -65,7 +64,7 @@ namespace NETCoreExperimentalWebApp.Controllers
                                             .FirstOrDefault()).Result;
                 if (result.Succeeded)
                 {
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Users));
                 }
                 return View(id);
             }
