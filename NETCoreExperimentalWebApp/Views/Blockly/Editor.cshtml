@@ -6,25 +6,25 @@
 
 <h2>Editor</h2>
 
+<i id="targetElement" class="talk icon"></i>
+<div class="ui divider"></div>
 <div id="blocklyDiv" style="height: 620px; width: 1000px;"></div>
 
 <xml id="toolbox" style="display: none">
-    <block type="controls_if"></block>
-    <block type="controls_repeat_ext"></block>
-    <block type="logic_compare"></block>
-    <block type="math_number"></block>
-    <block type="math_arithmetic"></block>
-    <block type="text"></block>
-    <block type="text_print"></block>
+    <block type="icon_change_color_red"></block>
 </xml>
 
 @section Scripts {
     <script type="text/javascript" src='~/lib/google-blockly-941d8e4/blockly_compressed.js'></script>
+    <script type="text/javascript" src='~/lib/google-blockly-941d8e4/generators/javascript.js'
     <script type="text/javascript" src='~/lib/google-blockly-941d8e4/blocks_compressed.js'></script>
     <script type="text/javascript" src='~/lib/google-blockly-941d8e4/msg/js/en.js'></script>
+    <script type="text/javascript" src='~/js/Blocks.js'></script>
 
     <script>
         var workspacePlayground = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox') });
+        Blockly.JavaScript.addReservedWords('code');
+        var code = Blockly.JavaScript.workspaceToCode(workspace);
     </script>
 
 }
