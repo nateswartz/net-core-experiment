@@ -28,6 +28,10 @@
     <script type="text/javascript" src='~/js/Blocks.js'></script>
 
     <script>
+        var Timer = {
+            count: 1
+        };
+
         var workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox') });
         Blockly.JavaScript.addReservedWords('code');
         
@@ -35,15 +39,16 @@
         $("#GenerateCode").on("click",
             function () {
                 var code = Blockly.JavaScript.workspaceToCode(workspace);
-                $(".segment").text(code.replace(";", ";\n").split(",")[0]);
-                //eval(code);
+                $(".segment").text(code.replace(";", ";\n").split(",1")[0]);
+                Timer.count = 1;
             }
         );
 
         $("#RunCode").on("click",
             function () {
                 var code = Blockly.JavaScript.workspaceToCode(workspace);
-                eval(code.split(",")[0]);
+                eval(code.split(",1")[0]);
+                Timer.count = 1;
             }
         );
     </script>

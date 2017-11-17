@@ -10,8 +10,9 @@
 };
 
 Blockly.JavaScript['icon_change_color_red'] = function (block) {
-    // String or array length.
-    var code = "$('#targetElement').delay(500).addClass('red');";
+    var timer = 500 * Timer.count;
+    Timer.count++;
+    var code = "setTimeout(function(){$('#targetElement').css('color', 'red');}, " + timer + ");";
     return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
 
@@ -28,7 +29,8 @@ Blockly.Blocks['icon_change_color_green'] = {
 };
 
 Blockly.JavaScript['icon_change_color_green'] = function (block) {
-    // String or array length.
-    var code = "$('#targetElement').delay(500).addClass('green');";
+    var timer = 500 * Timer.count;
+    Timer.count++;
+    var code = "setTimeout(function(){$('#targetElement').css('color', 'green');}, " + timer + ");";
     return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
