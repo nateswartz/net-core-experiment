@@ -6,16 +6,21 @@
 
 <div class="field">
     <label>Source</label>
-    <select class="ui dropdown" name="dropdown"
+    <select class="ui dropdown" name="dropdown" multiple=""
             data-bind="options: articleSources,
                             optionsText: 'Name',
                             optionsValue: 'Id',
-                            value: selectedSource"></select>
+                            selectedOptions: selectedSources"></select>
 </div>
 
 <div class="ui divider"></div>
-
+<div class="ui segment" data-bind="visible: selectedSources().length === 0">
+    No sources selected, pick some from the dropdown.
+</div>
 <div class="ui link cards" data-bind="foreach: articles">
+    <div class="ui active dimmer">
+        <div class="ui loader"></div>
+    </div>
     <div class="ui card">
         <a class="image" data-bind="attr: { href: Url }" target="_blank">
             <img data-bind="attr: { src: UrlToImage }" />
@@ -39,31 +44,33 @@
             var self = this;
             self.articles = ko.observableArray();
             self.articleSources = ko.observableArray();
-            self.selectedSource = ko.observable('');
+            self.selectedSources = ko.observableArray();
 
             self.updateSource = function () {
-                console.log(self.selectedSource());
-                if (self.selectedSource() !== undefined) {
+                console.log(self.selectedSources());
+                console.log(JSON.stringify(ko.toJS(self.selectedSources())));
+                if (self.selectedSources() !== undefined) {
                     $.ajax({
                         type: "POST",
                         url: "/Home/GetArticles",
-                        data: JSON.stringify(ko.toJS(self.selectedSource())),
+                        data: JSON.stringify(ko.toJS(self.selectedSources())),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) {
                             console.log(data);
                             ko.mapping.fromJS(data, {}, viewModel.articles);
+                            $('.dimmer').removeClass('active');
                         }
                     });
                 }
             };
 
-            self.selectedSource.subscribe(self.updateSource);
+            self.selectedSources.subscribe(self.updateSource);
 
             return {
                 articles: self.articles,
                 articleSources: self.articleSources,
-                selectedSource: self.selectedSource
+                selectedSources: self.selectedSources
             };
         })();
 
@@ -79,8 +86,8 @@
                 async: false,
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
+                    console.log(data);
                     ko.mapping.fromJS(data, {}, viewModel.articleSources);
-                    viewModel.selectedSource('ars-technica');
                 }
             });
 

@@ -20,9 +20,9 @@ namespace NETCoreExperimentalWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetArticles([FromBody]string source)
+        public IActionResult GetArticles([FromBody]List<string> sources)
         {
-            var articles = _newsProvider.GetArticles(new List<string>() { source });
+            var articles = _newsProvider.GetArticles(sources);
             return new ObjectResult(articles);
         }
 
