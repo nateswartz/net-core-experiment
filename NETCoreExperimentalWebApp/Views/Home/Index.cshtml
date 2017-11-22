@@ -47,9 +47,7 @@
             self.selectedSources = ko.observableArray();
 
             self.updateSource = function () {
-                console.log(self.selectedSources());
-                console.log(JSON.stringify(ko.toJS(self.selectedSources())));
-                if (self.selectedSources() !== undefined) {
+                if (self.selectedSources().length !== 0) {
                     $.ajax({
                         type: "POST",
                         url: "/Home/GetArticles",
@@ -57,11 +55,13 @@
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) {
-                            console.log(data);
                             ko.mapping.fromJS(data, {}, viewModel.articles);
                             $('.dimmer').removeClass('active');
                         }
                     });
+                }
+                else {
+                    self.articles([]);
                 }
             };
 
@@ -86,7 +86,6 @@
                 async: false,
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
-                    console.log(data);
                     ko.mapping.fromJS(data, {}, viewModel.articleSources);
                 }
             });

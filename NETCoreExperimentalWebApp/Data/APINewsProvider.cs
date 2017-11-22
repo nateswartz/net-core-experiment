@@ -45,15 +45,11 @@ namespace NETCoreExperimentalWebApp.Data
 
         public IList<NewsArticleModel> GetArticles(IList<string> sources)
         {
-            var articles = new List<NewsArticleModel>();
-            foreach (var source in sources)
-            {
-                var result = _client.GetAsync($"top-headlines?sources={source}&{_queryStringParams}&{_apiKeyQueryStringParam}").Result;
-                var data = result.Content.ReadAsStringAsync().Result;
-                var response = JsonConvert.DeserializeObject<NewsArticlesResponse>(data);
-                articles.AddRange(response.articles);
-            }
-            return articles;
+            var sourcesQueryString = string.Join(",", sources);
+            var result = _client.GetAsync($"top-headlines?sources={sourcesQueryString}&{_queryStringParams}&{_apiKeyQueryStringParam}").Result;
+            var data = result.Content.ReadAsStringAsync().Result;
+            var response = JsonConvert.DeserializeObject<NewsArticlesResponse>(data);
+            return response.articles;
         }
 
         public IList<NewsSourceModel> GetSources()
