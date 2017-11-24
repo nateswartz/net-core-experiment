@@ -9,11 +9,23 @@
 <i id="iconTalk" class="massive talk icon"></i>
 <i id="iconHouse" class="massive home icon"></i>
 <div class="ui divider"></div>
-<div class="ui segment" style="white-space: pre-line"></div>
-<div class="ui divider"></div>
-<div id="GenerateCode" class="ui button">Generate Code</div>
-<div id="RunCode" class="ui button">Run Code</div>
-<div class="ui divider"></div>
+<div class="ui grid">
+    <div class="six wide column">
+        <div>
+            Delay between commands (ms):
+        </div>
+        <div class="ui input">
+            <input type="text" data-bind="value: delay">
+        </div>
+        <div class="ui hidden divider"></div>
+        <div id="GenerateCode" class="ui button">Generate Code</div>
+        <div id="RunCode" class="ui button">Run Code</div>
+    </div>
+    <div class="ten wide column">
+        <div class="ui segment" style="white-space: pre-line"></div>
+    </div>
+</div>
+<div class="ui hidden divider"></div>
 <div id="blocklyDiv" style="height: 620px; width: 1000px;"></div>
 
 <xml id="toolbox" style="display: none">
@@ -29,6 +41,17 @@
 
     <script>
         var codeToExecute = [];
+
+        var viewModel = (function () {
+            var self = this;
+            self.delay = ko.observable('500');
+
+            return {
+                delay: self.delay,
+            };
+        })();
+
+        ko.applyBindings(viewModel);
 
         var workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox') });
         Blockly.JavaScript.addReservedWords('code');
@@ -55,7 +78,7 @@
             }
             console.log(codeToExecute[index]);
             eval(codeToExecute[index]);
-            setTimeout(function () { executeStatement(index + 1) }, 500);
+            setTimeout(function () { executeStatement(index + 1) }, viewModel.delay());
         }
     </script>
 
