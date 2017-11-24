@@ -6,8 +6,10 @@
 
 <h2>Editor</h2>
 
-<i id="iconTalk" class="massive talk icon"></i>
-<i id="iconHouse" class="massive home icon"></i>
+<div class="ui center aligned container">
+    <i id="iconTalk" class="massive talk icon"></i>
+    <i id="iconHouse" class="massive home icon"></i>
+</div>
 <div class="ui divider"></div>
 <div class="ui grid">
     <div class="six wide column">
@@ -19,7 +21,7 @@
         </div>
         <div class="ui hidden divider"></div>
         <div id="GenerateCode" class="ui button">Generate Code</div>
-        <div id="RunCode" class="ui button">Run Code</div>
+        <div id="RunCode" class="ui button" data-bind="css: { disabled: codeRunning}">Run Code</div>
     </div>
     <div class="ten wide column">
         <div class="ui segment" style="white-space: pre-line"></div>
@@ -45,9 +47,11 @@
         var viewModel = (function () {
             var self = this;
             self.delay = ko.observable('500');
+            self.codeRunning = ko.observable('');
 
             return {
                 delay: self.delay,
+                codeRunning: self.codeRunning
             };
         })();
 
@@ -56,28 +60,30 @@
         var workspace = Blockly.inject('blocklyDiv', { toolbox: document.getElementById('toolbox') });
         Blockly.JavaScript.addReservedWords('code');
 
-        $("#GenerateCode").on("click",
+        $('#GenerateCode').on('click',
             function () {
                 var code = Blockly.JavaScript.workspaceToCode(workspace);
-                $(".segment").text(code.replace(new RegExp(";", 'g'), ";\n"));
-                console.log(code.replace(new RegExp(";", 'g'), ";\n"));
+                $('.segment').text(code.replace(new RegExp(';', 'g'), ';\n'));
+                console.log(code.replace(new RegExp(';', 'g'), ';\n'));
             }
         );
 
-        $("#RunCode").on("click",
+        $('#RunCode').on('click',
             function () {
+                viewModel.codeRunning('1');
                 var code = Blockly.JavaScript.workspaceToCode(workspace);
-                codeToExecute = code.split(";");
+                codeToExecute = code.split(';');
                 executeStatement(0);
             }
         );
 
         function executeStatement(index) {
-            if (index >= codeToExecute.length) {
-                return;
-            }
             console.log(codeToExecute[index]);
             eval(codeToExecute[index]);
+            if ((index + 1) >= codeToExecute.length) {
+                viewModel.codeRunning('');
+                return;
+            }
             setTimeout(function () { executeStatement(index + 1) }, viewModel.delay());
         }
     </script>
