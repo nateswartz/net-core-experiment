@@ -3,6 +3,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using NETCoreExperimentalWebApp.Models.NewsModels;
+using NETCoreExperimentalWebApp.Infrastructure;
 
 namespace NETCoreExperimentalWebApp.Data
 {
@@ -12,9 +13,9 @@ namespace NETCoreExperimentalWebApp.Data
         private readonly string _apiKeyQueryStringParam = "apiKey=5933e800d1bc401f88e92f56caff0aca";
         private readonly string _queryStringParams = "language=en&country=us";
 
-        public APINewsProvider()
+        public APINewsProvider(IHttpClientAccessor httpClientAccessor)
         {
-            _client = new HttpClient();
+            _client = httpClientAccessor.Client;
             _client.BaseAddress = new Uri("https://newsapi.org/v2/");
         }
 
@@ -54,6 +55,7 @@ namespace NETCoreExperimentalWebApp.Data
 
         public IList<NewsSourceModel> GetSources()
         {
+            //https://newsapi.org/v2/sources?language=en&country=us&apiKey=5933e800d1bc401f88e92f56caff0aca
             var result = _client.GetAsync($"sources?{_queryStringParams}&{_apiKeyQueryStringParam}").Result;
             var data = result.Content.ReadAsStringAsync().Result;
             var response = JsonConvert.DeserializeObject<NewsSourcesResponse>(data);

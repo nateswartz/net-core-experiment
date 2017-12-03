@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NETCoreExperimentalWebApp.Data;
 using NETCoreExperimentalWebApp.Models;
 using Microsoft.AspNetCore.Identity;
+using NETCoreExperimentalWebApp.Infrastructure;
 
 namespace NETCoreExperimentalWebApp
 {
@@ -43,6 +44,8 @@ namespace NETCoreExperimentalWebApp
             services.AddScoped<IBookDataProvider, EfBookDataProvider>();
             services.AddSingleton<IStarWarsDataProvider, APIStarWarsProvider>();
             services.AddSingleton<INewsProvider, APINewsProvider>();
+            services.AddSingleton<ICryptoTickerProvider, APICryptoTickerProvider>();
+            services.AddTransient<IHttpClientAccessor, DefaultHttpClientAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

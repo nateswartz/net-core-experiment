@@ -9,9 +9,12 @@ namespace NETCoreExperimentalWebApp.Controllers
     public class HomeController : Controller
     {
         private INewsProvider _newsProvider;
-        public HomeController(INewsProvider newsProvider)
+        private ICryptoTickerProvider _cryptoProvider;
+
+        public HomeController(INewsProvider newsProvider, ICryptoTickerProvider cryptoProvider)
         {
             _newsProvider = newsProvider;
+            _cryptoProvider = cryptoProvider;
         }
 
         public IActionResult Index()
@@ -31,6 +34,13 @@ namespace NETCoreExperimentalWebApp.Controllers
         {
             var sources = _newsProvider.GetSources();
             return new ObjectResult(sources);
+        }
+
+        [HttpGet]
+        public IActionResult GetCryptocurrencyValues()
+        {
+            var cryptocurrencies = _cryptoProvider.GetTickerValues();
+            return new ObjectResult(cryptocurrencies);
         }
 
         public IActionResult Error()

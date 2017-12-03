@@ -4,7 +4,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NETCoreExperimentalWebApp.Models.StarWarsModels;
-using System.Linq;
+using NETCoreExperimentalWebApp.Infrastructure;
 
 namespace NETCoreExperimentalWebApp.Data
 {
@@ -16,9 +16,9 @@ namespace NETCoreExperimentalWebApp.Data
 
         private List<SpeciesModel> _speciesCache;
 
-        public APIStarWarsProvider()
+        public APIStarWarsProvider(IHttpClientAccessor httpClientAccessor)
         {
-            _client = new HttpClient();
+            _client = httpClientAccessor.Client;
             _client.BaseAddress = new Uri("https://swapi.co/api/");
         }
 

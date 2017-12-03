@@ -3,45 +3,62 @@
 }
 
 <h2 class="ui header">News Articles</h2>
-
-<div class="field">
-    <label>Source</label>
-    <select class="ui dropdown" name="dropdown" multiple=""
-            data-bind="options: articleSources,
+<div class="ui grid">
+    <div class="twelve wide column">
+        <div class="field">
+            <label>Source</label>
+            <select class="ui dropdown" name="dropdown" multiple=""
+                    data-bind="options: articleSources,
                             optionsText: 'Name',
                             optionsValue: 'Id',
                             selectedOptions: selectedSources"></select>
-</div>
+        </div>
 
-<div class="ui divider"></div>
-<div class="ui segment" data-bind="visible: selectedSources().length === 0">
-    No sources selected, pick some from the dropdown.
-</div>
-<div class="ui link cards" data-bind="foreach: articles">
-    <div class="ui active dimmer">
-        <div class="ui loader"></div>
+        <div class="ui divider"></div>
+        <div class="ui segment" data-bind="visible: selectedSources().length === 0">
+            No sources selected, pick some from the dropdown.
+        </div>
+        <div class="ui link cards" data-bind="foreach: articles">
+            <div class="ui active dimmer">
+                <div class="ui loader"></div>
+            </div>
+            <div class="ui card">
+                <a class="image" data-bind="attr: { href: Url }" target="_blank">
+                    <img data-bind="attr: { src: UrlToImage }" />
+                </a>
+                <a class="content" data-bind="attr: { href: Url }" target="_blank">
+                    <div class="header" data-bind="text: Title"></div>
+                    <div class="meta" data-bind="text: Author"></div>
+                </a>
+                <a class="extra content" data-bind="attr: { href: Url }" target="_blank">
+                    <div class="meta" data-bind="text: Description"></div>
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="ui card">
-        <a class="image" data-bind="attr: { href: Url }" target="_blank">
-            <img data-bind="attr: { src: UrlToImage }" />
-        </a>
-        <a class="content" data-bind="attr: { href: Url }" target="_blank">
-            <div class="header" data-bind="text: Title"></div>
-            <div class="meta" data-bind="text: Author"></div>
-        </a>
-        <a class="extra content" data-bind="attr: { href: Url }" target="_blank">
-            <div class="meta" data-bind="text: Description"></div>
-        </a>
+    <div class="four wide column" style="height:500px;">
+        <div class="ui list" style="height:100%; overflow-y: scroll;" data-bind="foreach: cryptocurrencies">
+            <div class="item">
+                <div class="content">
+                    <div class="header" data-bind="text: Name() + ' (' + Symbol() + ')'"></div>
+                    <div class="description">
+                        <span data-bind="text: FormattedPrice()"></span>
+                        <span data-bind="text: ' (' + PercentChangeOneDay() + '%)', style: { color: PercentChangeOneDay() < 0 ? 'red' : 'green' }"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script type="text/javascript" src='@Url.Content("~/js/KOModels/ArticleViewModel.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/js/KOModels/CryptocurrencyViewModel.js")'></script>
     <script>
-
-
         var viewModel = (function () {
             var self = this;
+
+            self.cryptocurrencies = ko.observableArray();
             self.articles = ko.observableArray();
             self.articleSources = ko.observableArray();
             self.selectedSources = ko.observableArray();
@@ -68,6 +85,7 @@
             self.selectedSources.subscribe(self.updateSource);
 
             return {
+                cryptocurrencies: self.cryptocurrencies,
                 articles: self.articles,
                 articleSources: self.articleSources,
                 selectedSources: self.selectedSources
@@ -79,6 +97,20 @@
 
             // Initialize dropdowns
             $('.ui.dropdown').dropdown();
+
+            $.ajax({
+                type: "Get",
+                url: "/Home/GetCryptocurrencyValues",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var map = {
+                        create: function (options) {
+                            return new CryptocurrencyViewModel(options.data);
+                        }
+                    }
+                    ko.mapping.fromJS(data, map, viewModel.cryptocurrencies);
+                }
+            });
 
             $.ajax({
                 type: "Get",
