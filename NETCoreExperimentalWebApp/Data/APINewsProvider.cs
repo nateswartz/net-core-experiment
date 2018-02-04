@@ -47,7 +47,7 @@ namespace NETCoreExperimentalWebApp.Data
         public IList<NewsArticleModel> GetArticles(IList<string> sources)
         {
             var sourcesQueryString = string.Join(",", sources);
-            var result = _client.GetAsync($"top-headlines?sources={sourcesQueryString}&{_queryStringParams}&{_apiKeyQueryStringParam}").Result;
+            var result = _client.GetAsync($"top-headlines?sources={sourcesQueryString}&{_apiKeyQueryStringParam}").Result;
             var data = result.Content.ReadAsStringAsync().Result;
             var response = JsonConvert.DeserializeObject<NewsArticlesResponse>(data);
             return response.articles;
