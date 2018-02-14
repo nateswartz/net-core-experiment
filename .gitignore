@@ -2,3 +2,5 @@ NETCoreExperimentalWebApp/obj/*
 NETCoreExperimentalWebApp/bin/*
 .vs/*
 NETCoreExperimentalWebApp/NETCoreExperimentalWebApp.csproj.user
+NETCoreExperimentalWebApp/node_modules/
+NETCoreExperimentalWebApp/wwwroot/dist/build.js
