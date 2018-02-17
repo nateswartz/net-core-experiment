@@ -1,7 +1,8 @@
 ﻿<template>
     <div class="twelve wide column">
         <div class="field">
-            <label>Source</label>
+            <label>Sources:</label>
+            <div></div>
             <select v-model="selectedSources" class="ui dropdown" name="dropdown" multiple>
                 <option v-for="source in articleSources" v-bind:value="source.Id">
                     {{ source.Name }}

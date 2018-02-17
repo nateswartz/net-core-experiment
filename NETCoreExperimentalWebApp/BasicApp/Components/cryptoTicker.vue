@@ -5,7 +5,7 @@
                 <div class="content">
                     <div class="header" v-text="crypto.Name + ' (' + crypto.Symbol + ')'"></div>
                     <div class="description">
-                        <span v-text="crypto.Price_USD"></span>
+                        <span v-text="formatPrice(crypto.Price_USD)"></span>
                         <span v-text="' (' + crypto.percent_change_24h + '%)'" v-bind:style="{ color: crypto.percent_change_24h < 0 ? 'red' : 'green' }"></span>
                     </div>
                 </div>
@@ -31,6 +31,14 @@
                     self.cryptocurrencies = data;
                 }
             });
+        },
+        methods: {
+            formatPrice: function(price) {
+                if (price !== null) {
+                    return price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                }
+                return null;
+            }
         }
     }
 

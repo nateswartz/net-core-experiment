@@ -7,6 +7,7 @@ using NETCoreExperimentalWebApp.Data;
 using NETCoreExperimentalWebApp.Models;
 using Microsoft.AspNetCore.Identity;
 using NETCoreExperimentalWebApp.Infrastructure;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 
 namespace NETCoreExperimentalWebApp
 {
@@ -52,6 +53,10 @@ namespace NETCoreExperimentalWebApp
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseDeveloperExceptionPage();
+            app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+            {
+                HotModuleReplacement = true
+            });
             app.UseBrowserLink();
 
             app.UseStaticFiles();
