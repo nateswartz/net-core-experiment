@@ -3,28 +3,13 @@
 }
 
 <h2 class="ui header">News Articles</h2>
-<div class="ui grid">
-    <div id="vueApp">
-        <app></app>
-    </div>
-    @*<div class="four wide column" style="height:500px;">
-        <div class="ui list" style="height:100%; overflow-y: scroll;" data-bind="foreach: cryptocurrencies">
-            <div class="item">
-                <div class="content">
-                    <div class="header" data-bind="text: Name() + ' (' + Symbol() + ')'"></div>
-                    <div class="description">
-                        <span data-bind="text: FormattedPrice()"></span>
-                        <span data-bind="text: ' (' + PercentChangeOneDay() + '%)', style: { color: PercentChangeOneDay() < 0 ? 'red' : 'green' }"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>*@
+
+<div id="vueApp">
+    <app></app>
 </div>
 
 @section Scripts {
     <script src="~/dist/build.js" asp-append-version="true"></script>
-    <script type="text/javascript" src='@Url.Content("~/js/KOModels/ArticleViewModel.js")'></script>
     <script type="text/javascript" src='@Url.Content("~/js/KOModels/CryptocurrencyViewModel.js")'></script>
     <script>
         $(document).ready(function () {

@@ -1,0 +1,53 @@
+﻿<template>
+    <div class="four wide column" style="height:500px;">
+        <div class="ui list" style="height:100%; overflow-y: scroll;">
+            <div class="item" v-for="crypto in cryptocurrencies">
+                <div class="content">
+                    <div class="header" v-text="crypto.Name + ' (' + crypto.Symbol + ')'"></div>
+                    <div class="description">
+                        <span v-text="crypto.Price_USD"></span>
+                        <span v-text="' (' + crypto.percent_change_24h + '%)'" v-bind:style="{ color: crypto.percent_change_24h < 0 ? 'red' : 'green' }"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                cryptocurrencies: [],
+            }
+        },
+        created: function () {
+            var self = this;
+            $.ajax({
+                type: "GET",
+                url: "/Home/GetCryptocurrencyValues",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    self.cryptocurrencies = data;
+                }
+            });
+        }
+    }
+
+</script>
+<!--function CryptocurrencyViewModel(data) {
+    var self = this;
+    self.Name = ko.observable(data.Name);
+    self.Symbol = ko.observable(data.Symbol);
+    self.Price = ko.observable(data.Price_USD);
+    self.PercentChangeOneHour = ko.observable(data.percent_change_1h);
+    self.PercentChangeOneDay = ko.observable(data.percent_change_24h);
+    self.PercentChangeOneWeek = ko.observable(data.percent_change_7d);
+
+    self.FormattedPrice = ko.computed(function () {
+        if (self.Price() !== null) {
+            return self.Price().toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        }
+        return null;
+    }, self);
+};-->
