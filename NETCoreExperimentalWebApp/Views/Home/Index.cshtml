@@ -5,29 +5,9 @@
 <h2 class="ui header">News Articles</h2>
 
 <div id="vueApp">
-    <app></app>
+    <home-page></home-page>
 </div>
 
 @section Scripts {
-    <script src="~/dist/build.js" asp-append-version="true"></script>
-    <script type="text/javascript" src='@Url.Content("~/js/KOModels/CryptocurrencyViewModel.js")'></script>
-    <script>
-        $(document).ready(function () {
-            // Initialize dropdowns
-            $('.ui.dropdown').dropdown();
-            //$.ajax({
-            //    type: "Get",
-            //    url: "/Home/GetCryptocurrencyValues",
-            //    contentType: "application/json; charset=utf-8",
-            //    success: function (data) {
-            //        var map = {
-            //            create: function (options) {
-            //                return new CryptocurrencyViewModel(options.data);
-            //            }
-            //        }
-            //        ko.mapping.fromJS(data, map, viewModel.cryptocurrencies);
-            //    }
-            //});
-        });
-    </script>
+    <script src="~/dist/home-build.js" asp-append-version="true"></script>
 }

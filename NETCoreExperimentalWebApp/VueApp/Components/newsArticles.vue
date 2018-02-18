@@ -42,7 +42,6 @@
         },
         watch: {
             selectedSources: function (val) {
-                console.log("Triggered Watch");
                 var self = this;
                 if (self.selectedSources.length !== 0) {
                     $.ajax({
@@ -52,18 +51,15 @@
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (data) {
-                            console.log("Articles");
-                            console.log(data);
-                            $('.dimmer').removeClass('active');
                             self.articles = data;
                         }
                     });
                 }
                 self.articles = [];
-                console.log("Nothing");
             }
         },
         mounted: function () {
+            $('.ui.dropdown').dropdown();
             var self = this;
             $.ajax({
                 type: "Get",
@@ -71,14 +67,9 @@
                 async: false,
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
-                    console.log("Sources");
-                    console.log(data);
                     self.articleSources = data;
                 }
             });
         }
     }
 </script>
-
-<style>
-</style>

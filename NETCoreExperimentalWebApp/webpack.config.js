@@ -9,7 +9,7 @@ module.exports = {
         extensions: ['*', '.js', '.vue', '.json']
     },
     entry: {
-        app: path.resolve(__dirname,'./BasicApp/main.js')
+        home: path.resolve(__dirname, './VueApp/homePage.js'),
     },
     output: {
         path: path.resolve(__dirname, './wwwroot/dist'),
