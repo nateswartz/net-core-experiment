@@ -10,11 +10,12 @@ module.exports = {
     },
     entry: {
         home: path.resolve(__dirname, './VueApp/homePage.js'),
+        book: path.resolve(__dirname, './VueApp/bookPage.js')
     },
     output: {
-        path: path.resolve(__dirname, './wwwroot/dist'),
-        publicPath: 'dist/',
-        filename: 'build.js'
+        path: path.resolve(__dirname, './dist'),
+        publicPath: '/dist/',
+        filename: '[name]-bundle.js'
     },
     module: {
         rules: [

@@ -1,0 +1,250 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<BookModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div id="vueApp">
+    <book-page></book-page>
+</div>
+
+@section Scripts {
+    <script src="~/dist/book-bundle.js" asp-append-version="true"></script>
+    @*<script type="text/javascript" src='@Url.Content("~/js/KOModels/BookViewModel.js")'></script>*@
+    @*<script>
+        // Do this right away
+        if (localStorage.getItem('showGrid') === 'true') {
+            $('#listItems').hide();
+            $('#gridItems').show();
+        } else {
+            $('#gridItems').hide();
+            $('#listItems').show();
+        };
+
+        var viewModel = (function () {
+            var self = this;
+            self.books = ko.observableArray();
+            self.selectedBook = ko.observable(new BookViewModel());
+            self.newBook = ko.observable(new BookViewModel());
+            self.bookTypeOptions = [{ Text: "Board", Value: 0 }, { Text: "Electronic", Value: 1 }, { Text: "Standard", Value: 2 }];
+
+            self.selectBook = function (id) {
+                var book = ko.utils.arrayFirst(self.books(), function (book) {
+                    return book.id().toString() === id;
+                });
+                var temp = ko.toJS(book);
+                self.selectedBook(ko.mapping.fromJS(temp));
+            };
+
+            return {
+                books: self.books,
+                selectedBook: self.selectedBook,
+                newBook: self.newBook,
+                bookTypeOptions: self.bookTypeOptions,
+                selectBook: self.selectBook,
+            };
+        })();
+
+
+        $(document).ready(function() {
+            // Initialize dropdowns
+            $('.ui.dropdown').dropdown();
+
+            // Convert MVC Model to Knockout ViewModel
+            ko.mapping.fromJS(@Html.Raw(JsonConvert.SerializeObject(Model)), {}, viewModel.books);
+            ko.applyBindings(viewModel);
+
+            // Setup add form
+            $('#modalAddBook .ui.form').form({
+                on: 'blur',
+                fields: {
+                    Title: {
+                        identifier: 'inputAddBookTitle',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a Title'
+                            }
+                        ]
+                    },
+                    Author: {
+                        identifier: 'inputAddBookAuthor',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Author'
+                            }
+                        ]
+                    },
+                    Image: {
+                        identifier: 'inputAddBookImage',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Image'
+                            }
+                        ]
+                    }
+                },
+                onSuccess: function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Books/Create",
+                        data: JSON.stringify(ko.toJS(viewModel.newBook())),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            var book = ko.mapping.fromJS(data);
+                            viewModel.books.push(book);
+                            // When we add a new book we need to add a click handler to the delete button
+                            addButtonBindings();
+                        }
+                    });
+                    $("#modalAddBook").modal('hide');
+                }
+            });
+
+            // Setup edit form
+            $('#modalEditBook .ui.form').form({
+                on: 'blur',
+                fields: {
+                    Title: {
+                        identifier: 'inputEditBookTitle',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a Title'
+                            }
+                        ]
+                    },
+                    Author: {
+                        identifier: 'inputEditBookAuthor',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Author'
+                            }
+                        ]
+                    },
+                    Image: {
+                        identifier: 'inputEditBookImage',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an Image'
+                            }
+                        ]
+                    }
+                },
+                onSuccess: function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Books/Edit/" + viewModel.selectedBook().id(),
+                        data: JSON.stringify(ko.toJS(viewModel.selectedBook())),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function () {
+                            var bookToModify = ko.utils.arrayFirst(viewModel.books(), function (book) {
+                                return book.id() === viewModel.selectedBook().id();
+                            });
+                            viewModel.books.replace(bookToModify, viewModel.selectedBook());
+                            // When we add a new book we need to add a click handler to the delete button
+                            addButtonBindings();
+                        }
+                    });
+                    $("#modalEditBook").modal('hide');
+                }
+            });
+
+            // Perform any event bindings on dynamic elements
+            addButtonBindings();
+        });
+
+        function onListDeleteClick() {
+            viewModel.selectBook($(this).attr('data-id'));
+            $("#modalDeleteBook").modal('show');
+        };
+
+        function onListEditClick() {
+            resetModal('#modalEditBook');
+            viewModel.selectedBook().Type.valueHasMutated()
+            viewModel.selectBook($(this).attr('data-id'));
+            $("#modalEditBook").modal('show');
+        };
+
+        function resetModal(modalId) {
+            $(modalId + ' .error').removeClass("error");
+            $(modalId + ' .form .message').hide();
+        };
+
+        function addButtonBindings() {
+            $(".delete.book").on("click", onListDeleteClick);
+            $(".edit.book").on("click", onListEditClick);
+        };
+
+        // Event bindings on static elements
+        $("#btnDisplayGrid").on("click",
+            function() {
+                $("#listItems").fadeOut();
+                $("#gridItems").fadeIn();
+                localStorage.setItem('showGrid', 'true');
+            }
+        );
+
+        $("#btnDisplayList").on("click",
+            function() {
+                $("#gridItems").fadeOut();
+                $("#listItems").fadeIn();
+                localStorage.setItem('showGrid', 'false');
+            }
+        );
+
+        $("#btnAddBook").on("click",
+            function() {
+                resetModal('#modalAddBook');
+                $("#modalAddBook").modal('show');
+            }
+        );
+
+        $("#btnCancelAddBook").on("click",
+            function() {
+                $("#modalAddBook").modal('hide');
+                resetModal('#modalAddBook');
+            }
+        );
+
+        $("#btnConfirmAddBook").on("click",
+            function() {
+                $('#modalAddBook .form .message').show();
+            }
+        );
+
+        $("#btnCancelEditBook").on("click",
+            function() {
+                $("#modalEditBook").modal('hide');
+                resetModal('#modalEditBook');
+            }
+        );
+
+        $("#btnConfirmEditBook").on("click",
+            function() {
+                $('#modalEditBook .form .message').show();
+            }
+        );
+
+        $("#btnConfirmDeleteBook").on("click",
+            function() {
+                $.ajax({
+                    type: "POST",
+                    url: "/Books/Delete/" + viewModel.selectedBook().id(),
+                    success: function() {
+                        viewModel.books.remove(function(book) {
+                            return book.id() === viewModel.selectedBook().id();
+                        });
+                    }
+                });
+            }
+        );
+    </script>*@
+}

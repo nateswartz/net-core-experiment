@@ -26,6 +26,11 @@ namespace NETCoreExperimentalWebApp.Controllers
             return View(_bookDataProvider.GetForUser(id));
         }
 
+        public IActionResult VueIndex()
+        {
+            return View();
+        }
+
         // GET: Books/Details/5
         public IActionResult Details(int? id)
         {
@@ -41,6 +46,13 @@ namespace NETCoreExperimentalWebApp.Controllers
             }
 
             return View(book);
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var id = _userManager.GetUserId(User);
+            return new ObjectResult(_bookDataProvider.GetForUser(id));
         }
 
         [HttpPost]
